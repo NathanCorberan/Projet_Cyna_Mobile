@@ -1,5 +1,6 @@
 // lib/widgets/header_menu.dart
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HeaderMenu extends StatefulWidget {
   @override
@@ -223,19 +224,19 @@ class _HeaderMenuState extends State<HeaderMenu> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.camera_alt, color: Colors.white), // Instagram icon
+                            icon: Icon(FontAwesomeIcons.instagram, color: Colors.white),
                             onPressed: () {},
                           ),
                           IconButton(
-                            icon: Icon(Icons.alternate_email, color: Colors.white), // Twitter icon
+                            icon: Icon(FontAwesomeIcons.twitter, color: Colors.white), // Twitter icon
                             onPressed: () {},
                           ),
                           IconButton(
-                            icon: Icon(Icons.link, color: Colors.white), // LinkedIn icon
+                            icon: Icon(FontAwesomeIcons.linkedinIn, color: Colors.white), // LinkedIn icon
                             onPressed: () {},
                           ),
                           IconButton(
-                            icon: Icon(Icons.facebook, color: Colors.white), // Facebook icon
+                            icon: Icon(FontAwesomeIcons.facebook, color: Colors.white), // Facebook icon
                             onPressed: () {},
                           ),
                         ],
