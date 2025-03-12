@@ -2,10 +2,58 @@ import 'package:flutter/material.dart';
 import '../widgets/header_menu.dart';
 import './login.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class CreateAccount extends StatelessWidget {
+class CreateAccount extends StatefulWidget  {
+  @override
+  _CreateAccountState createState() => _CreateAccountState();
+}
 
-  void _createAccount() {
+class _CreateAccountState extends State<CreateAccount> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController prenomController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+
+  void _createAccount() async {
+    String email = emailController.text;
+    String name = nameController.text;
+    String prenom = prenomController.text;
+    String password = passwordController.text;
+    String confirmPassword = confirmPasswordController.text;
+
+    if (password != confirmPassword) {
+      print("Les mots de passe ne correspondent pas !");
+      return;
+    }
+
+    final String apiUrl = "http://api.juku7704.odns.fr/api/users"; // Remplace par ton URL d'API
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "email": email,
+          "first_name": name,
+          "last_name": prenom,
+          "password": password,
+          "isActivate": true
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print("Compte créé avec succès : ${response.body}");
+      } else {
+        print("Erreur : ${response.statusCode} - ${response.body}");
+      }
+    } catch (e) {
+      print("Erreur de connexion : $e");
+    }
   }
 
   void _goToLogin(BuildContext context) {
@@ -49,90 +97,15 @@ class CreateAccount extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 10),
-                      TextField(
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          labelStyle: TextStyle(color: Color(0xFF302082)), // Couleur du texte du label
-                          hintText: 'Entrez votre email', // Texte par défaut à l'intérieur du TextField
-                          hintStyle: TextStyle(color: Colors.grey), // Style du texte hint
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFF302082), width: 1), // Bordure bleue
-                            borderRadius: BorderRadius.circular(10), // Coins arrondis
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFF302082), width: 1), // Bordure bleue quand actif
-                            borderRadius: BorderRadius.circular(10), // Coins arrondis
-                          ),
-                        ),
-                      ),
+                      _buildTextField("Email", emailController),
                       SizedBox(height: 10),
-                      TextField(
-                        decoration: InputDecoration(
-                          labelText: 'Nom',
-                          labelStyle: TextStyle(color: Color(0xFF302082)), // Couleur du texte du label
-                          hintText: 'Entrez votre nom', // Texte par défaut à l'intérieur du TextField
-                          hintStyle: TextStyle(color: Colors.grey), // Style du texte hint
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFF302082), width: 1), // Bordure bleue
-                            borderRadius: BorderRadius.circular(10), // Coins arrondis
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFF302082), width: 1), // Bordure bleue quand actif
-                            borderRadius: BorderRadius.circular(10), // Coins arrondis
-                          ),
-                        ),
-                      ),
+                      _buildTextField("Nom", nameController),
                       SizedBox(height: 10),
-                      TextField(
-                        decoration: InputDecoration(
-                          labelText: 'Prenom',
-                          labelStyle: TextStyle(color: Color(0xFF302082)), // Couleur du texte du label
-                          hintText: 'Entrez votre prenom', // Texte par défaut à l'intérieur du TextField
-                          hintStyle: TextStyle(color: Colors.grey), // Style du texte hint
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFF302082), width: 1), // Bordure bleue
-                            borderRadius: BorderRadius.circular(10), // Coins arrondis
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFF302082), width: 1), // Bordure bleue quand actif
-                            borderRadius: BorderRadius.circular(10), // Coins arrondis
-                          ),
-                        ),
-                      ),
+                      _buildTextField("Prénom", prenomController),
                       SizedBox(height: 10),
-                      TextField(
-                        decoration: InputDecoration(
-                          labelText: 'mot de passe',
-                          labelStyle: TextStyle(color: Color(0xFF302082)), // Couleur du texte du label
-                          hintText: 'Entrez votre mot de passe', // Texte par défaut à l'intérieur du TextField
-                          hintStyle: TextStyle(color: Colors.grey), // Style du texte hint
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFF302082), width: 1), // Bordure bleue
-                            borderRadius: BorderRadius.circular(10), // Coins arrondis
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFF302082), width: 1), // Bordure bleue quand actif
-                            borderRadius: BorderRadius.circular(10), // Coins arrondis
-                          ),
-                        ),
-                      ),
+                      _buildTextField("Mot de passe", passwordController, obscureText: true),
                       SizedBox(height: 10),
-                      TextField(
-                        decoration: InputDecoration(
-                          labelText: 'confirmation mot de passe',
-                          labelStyle: TextStyle(color: Color(0xFF302082)), // Couleur du texte du label
-                          hintText: 'Veuillez confirmer mot de passe', // Texte par défaut à l'intérieur du TextField
-                          hintStyle: TextStyle(color: Colors.grey), // Style du texte hint
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFF302082), width: 1), // Bordure bleue
-                            borderRadius: BorderRadius.circular(10), // Coins arrondis
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFF302082), width: 1), // Bordure bleue quand actif
-                            borderRadius: BorderRadius.circular(10), // Coins arrondis
-                          ),
-                        ),
-                      ),
+                      _buildTextField("Confirmer mot de passe", confirmPasswordController, obscureText: true),
                       SizedBox(height: 20),
                       TextButton(
                         onPressed: _createAccount, // Remplacez par votre fonction d'action
@@ -224,6 +197,27 @@ class CreateAccount extends StatelessWidget {
             ),
             SizedBox(height: 50),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, {bool obscureText = false}) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Color(0xFF302082)),
+        hintText: 'Entrez votre $label',
+        hintStyle: TextStyle(color: Colors.grey),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF302082), width: 1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF302082), width: 1),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
     );
