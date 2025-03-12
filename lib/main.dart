@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'widgets/header_menu.dart';
+import 'pages/home.dart'; // Met à jour l'import avec le bon chemin
 
 void main() {
   runApp(MyApp());
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Color(0xFF302082),
       ),
-      home: HeaderMenu(),
+      home: HomePage(), // Afficher HomePage
     );
   }
 }
