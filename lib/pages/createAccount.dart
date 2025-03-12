@@ -203,6 +203,25 @@ class _CreateAccountState extends State<CreateAccount> {
   }
 
   Widget _buildTextField(String label, TextEditingController controller, {bool obscureText = false}) {
+    IconData icon;
+
+    // Déterminer l'icône en fonction du label
+    switch (label.toLowerCase()) {
+      case "email":
+        icon = Icons.email;
+        break;
+      case "nom":
+      case "prénom":
+        icon = Icons.person;
+        break;
+      case "mot de passe":
+      case "confirmer mot de passe":
+        icon = Icons.lock;
+        break;
+      default:
+        icon = Icons.text_fields; // Icône par défaut
+    }
+
     return TextField(
       controller: controller,
       obscureText: obscureText,
@@ -219,6 +238,7 @@ class _CreateAccountState extends State<CreateAccount> {
           borderSide: BorderSide(color: Color(0xFF302082), width: 1),
           borderRadius: BorderRadius.circular(10),
         ),
+        suffixIcon: Icon(icon, color: Color(0xFF302082)), // Ajout de l'icône à droite
       ),
     );
   }
