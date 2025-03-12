@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../pages/createAccount.dart';
+import '../pages/home.dart';
 
 class HeaderMenu extends StatefulWidget implements PreferredSizeWidget {
   @override
@@ -113,11 +115,20 @@ class _HeaderMenuState extends State<HeaderMenu> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Image.network(
-            'https://static.wixstatic.com/media/d9da11_f0ddbd894a0c4eeba7b96fdf02a011e9~mv2.png/v1/fill/w_342,h_98,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Logo%20Cyna%20Purple%20and%20white.png',
-            fit: BoxFit.contain,
-            height: 40,
-            cacheWidth: 1000,
+          GestureDetector(
+            onTap: () {
+              // Lorsque l'image est cliquée, rediriger vers la page HomePage
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()), // Page HomePage
+              );
+            },
+            child: Image.network(
+              'https://static.wixstatic.com/media/d9da11_f0ddbd894a0c4eeba7b96fdf02a011e9~mv2.png/v1/fill/w_342,h_98,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Logo%20Cyna%20Purple%20and%20white.png',
+              fit: BoxFit.contain,
+              height: 40,
+              cacheWidth: 1000,
+            ),
           ),
           Expanded(
             child: Padding(
@@ -141,11 +152,18 @@ class _HeaderMenuState extends State<HeaderMenu> {
             children: [
               if (!_isResearch) IconButton(
                 icon: Icon(Icons.shopping_cart, color: Colors.white),
-                onPressed: () {},
+                onPressed: () {
+
+                },
               ),
               if (!_isResearch) IconButton(
                 icon: Icon(Icons.account_circle, color: Colors.white),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CreateAccount()), // Création de la page CreateAccount
+                  );
+                },
               ),
               if (!_isResearch) IconButton(
                 icon: Icon(_isMenuOpen ? Icons.close : Icons.menu, color: Colors.white),
