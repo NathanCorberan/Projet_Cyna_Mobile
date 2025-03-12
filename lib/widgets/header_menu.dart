@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../pages/createAccount.dart';
+import '../pages/login.dart';
 import '../pages/home.dart';
 
 class HeaderMenu extends StatefulWidget implements PreferredSizeWidget {
@@ -16,6 +16,16 @@ class _HeaderMenuState extends State<HeaderMenu> {
   FocusNode _focusNode = FocusNode();
   OverlayEntry? _overlayEntry;
   bool _isMenuOpen = false;
+  bool _isCommandeOpen = false;
+
+  void _toggleCommandeMenu() {
+    setState(() {
+      _isCommandeOpen = !_isCommandeOpen;
+    });
+
+    _closeMenu();
+    _openMenu();
+  }
 
   @override
   void initState() {
@@ -42,6 +52,7 @@ class _HeaderMenuState extends State<HeaderMenu> {
     } else {
       _openMenu();
     }
+
     setState(() {
       _isMenuOpen = !_isMenuOpen;
     });
@@ -74,6 +85,33 @@ class _HeaderMenuState extends State<HeaderMenu> {
                 _menuItem("Recherche"),
                 _menuItem("Produit"),
                 _menuItem("Utilisateurs"),
+                _menuItem("Commandes"),
+                if (_isCommandeOpen)
+                  Column(
+                    children: [
+                      TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          "Option 1",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          "Option 2",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          "Option 3",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                      ),
+                    ],
+                  ),
                 Expanded(child: Container()), // Espacement
                 _menuItem("Mentions légales"),
                 _menuItem("CGU"),
@@ -88,10 +126,32 @@ class _HeaderMenuState extends State<HeaderMenu> {
   }
 
   Widget _menuItem(String title) {
-    return TextButton(
-      onPressed: _toggleMenu,
-      child: Text(title, style: TextStyle(color: Colors.white, fontSize: 20)),
-    );
+    if(title!="Commandes"){
+      return TextButton(
+        onPressed: _toggleMenu,
+        child: Text(title, style: TextStyle(color: Colors.white, fontSize: 20)),
+      );
+    }else{
+      return TextButton(
+        onPressed: _toggleCommandeMenu,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Commandes",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            Icon(
+              _isCommandeOpen
+                  ? Icons.keyboard_arrow_down
+                  : Icons.keyboard_arrow_right,
+              color: Colors.white,
+            ),
+          ],
+        ),
+      );
+    }
+
   }
 
   Widget _socialIcons() {
@@ -161,7 +221,7 @@ class _HeaderMenuState extends State<HeaderMenu> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => CreateAccount()), // Création de la page CreateAccount
+                    MaterialPageRoute(builder: (context) => Login()), // Création de la page CreateAccount
                   );
                 },
               ),
