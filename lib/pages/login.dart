@@ -1,9 +1,12 @@
+import '../pages/home.dart';
 import 'package:flutter/material.dart';
 import '../widgets/header_menu.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 import './createAccount.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import '../providers/VarProvider.dart';
 
 class Login extends StatefulWidget  {
   @override
@@ -13,6 +16,7 @@ class Login extends StatefulWidget  {
 class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool errorOnConnexion = false;
 
   void _login() async {
     String email = emailController.text;
@@ -35,10 +39,18 @@ class _LoginState extends State<Login> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         print("Compte connecté avec succès : ${response.body}");
         print(response);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
       } else {
+        errorOnConnexion = true;
+        _LoginState;
         print("Erreur : ${response.statusCode} - ${response.body}");
       }
     } catch (e) {
+      errorOnConnexion = true;
+      _LoginState;
       print("Erreur de connexion : $e");
     }
   }
@@ -56,6 +68,8 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    final varProvider = Provider.of<VarProvider>(context);
+
     return Scaffold(
       body: SingleChildScrollView( // Ajout du scroll
         child: Column(
@@ -91,7 +105,16 @@ class _LoginState extends State<Login> {
                     _buildTextField("Email", emailController),
                     SizedBox(height: 10),
                     _buildTextField("Mot de passe", passwordController, obscureText: true),
-                    SizedBox(height: 20),
+                    SizedBox(height: 10),
+                    if (errorOnConnexion) Text(
+                      "Email ou mot de passe incorrect",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 10),
                     TextButton(
                       onPressed: _login, // Remplacez par votre fonction d'action
                       style: TextButton.styleFrom(

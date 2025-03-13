@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/header_menu.dart';
+import 'package:provider/provider.dart';
+import 'package:cynamobile/providers/VarProvider.dart';
+
 
 class HomePage extends StatelessWidget {
   List<String> categories = [
@@ -28,6 +31,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final varProvider = Provider.of<VarProvider>(context);
+
     return Scaffold(
       body: SingleChildScrollView( // Ajout du scroll
         child: Column(

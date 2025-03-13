@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
-import 'pages/home.dart'; // Met à jour l'import avec le bon chemin
+import 'pages/home.dart';
+import 'package:provider/provider.dart';
+import 'package:cynamobile/providers/VarProvider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => VarProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

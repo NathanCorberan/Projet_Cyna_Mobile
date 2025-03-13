@@ -4,6 +4,10 @@ import './login.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import '../providers/VarProvider.dart';
+import '../pages/home.dart';
+
 
 class CreateAccount extends StatefulWidget  {
   @override
@@ -16,6 +20,7 @@ class _CreateAccountState extends State<CreateAccount> {
   final TextEditingController prenomController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
+  bool errorOnCreate = false;
 
   void _createAccount() async {
     String email = emailController.text;
@@ -48,11 +53,19 @@ class _CreateAccountState extends State<CreateAccount> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print("Compte créé avec succès : ${response.body}");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
       } else {
         print("Erreur : ${response.statusCode} - ${response.body}");
+        errorOnCreate = true;
+        _CreateAccountState;
       }
     } catch (e) {
       print("Erreur de connexion : $e");
+      errorOnCreate = true;
+      _CreateAccountState;
     }
   }
 
@@ -65,6 +78,8 @@ class _CreateAccountState extends State<CreateAccount> {
 
   @override
   Widget build(BuildContext context) {
+    final varProvider = Provider.of<VarProvider>(context);
+
     return Scaffold(
       body: SingleChildScrollView( // Ajout du scroll
         child: Column(
@@ -106,7 +121,16 @@ class _CreateAccountState extends State<CreateAccount> {
                       _buildTextField("Mot de passe", passwordController, obscureText: true),
                       SizedBox(height: 10),
                       _buildTextField("Confirmer mot de passe", confirmPasswordController, obscureText: true),
-                      SizedBox(height: 20),
+                      SizedBox(height: 10),
+                      if (errorOnCreate) Text(
+                        "Email déjà utilisé",
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 18,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 10),
                       TextButton(
                         onPressed: _createAccount, // Remplacez par votre fonction d'action
                         style: TextButton.styleFrom(
