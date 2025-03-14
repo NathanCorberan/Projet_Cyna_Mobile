@@ -87,7 +87,6 @@ class _HeaderMenuState extends State<HeaderMenu> {
                 _menuItem("Catégorie"),
                 _menuItem("Recherche"),
                 _menuItem("Produit"),
-                _menuItem("Utilisateurs"),
                 _menuItem("Commandes"),
                 if (_isCommandeOpen)
                   Column(
