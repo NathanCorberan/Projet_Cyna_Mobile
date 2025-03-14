@@ -24,13 +24,15 @@ class _LoginState extends State<Accountparameter> {
     setState(() {
       _changePassword = !_changePassword;
     });
-    print(_changePassword);
+
     _LoginState();
   }
 
   @override
   Widget build(BuildContext context) {
     final varProvider = Provider.of<VarProvider>(context);
+    String? text = "";
+    text = varProvider.userVariable?.email;
 
     void logout() {
       varProvider.setUserVariableNull();
@@ -111,7 +113,7 @@ class _LoginState extends State<Accountparameter> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Email",
+                                text!,
                                 style: TextStyle(color: Colors.black, fontSize: 16),
                               ),
                               Icon(Icons.email, color: Color(0xFF302082)),
