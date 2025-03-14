@@ -71,6 +71,12 @@ flutter build apk --release
 flutter build ios --release
 ```
 
-## Auteur
-Nathan Corberan - [GitHub](https://github.com/nathancorberan)
+## Auteurs
+- **Nathan Corberan** - Développement principal
+- **Joris Lecharpentier** - Contributions backend et sécurité
+- **Noah Barreau** - Expérience utilisateur et intégration API
+- **Liova Hovakimyan** - Développement front-end
+
+## Conclusion
+Ce projet a été un excellent exercice de mise en pratique de nos compétences en développement web et en gestion de projet. Nous espérons que cette plateforme répondra aux attentes de l'entreprise Cyna et de ses clients.
 
