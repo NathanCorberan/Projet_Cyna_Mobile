@@ -18,6 +18,7 @@ class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool errorOnConnexion = false;
+  bool _isPasswordVisible = false; // Variable pour afficher ou masquer le mot de passe
 
   void _login() async {
     String email = emailController.text;
@@ -45,8 +46,6 @@ class _LoginState extends State<Login> {
         String token = data['token'];
         Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
 
-        //print("Token décodé : $decodedToken");
-
         final responseUser = await http.get(
           Uri.parse("http://api.juku7704.odns.fr/api/me"),
           headers: {
@@ -54,7 +53,6 @@ class _LoginState extends State<Login> {
             "Authorization": "Bearer "+ token,
           },
         );
-        //print(responseUser.body);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
@@ -63,12 +61,10 @@ class _LoginState extends State<Login> {
         varProvider.updateUserVariable(responseUser.body);
       } else {
         errorOnConnexion = true;
-        _LoginState;
         print("Erreur : ${response.statusCode} - ${response.body}");
       }
     } catch (e) {
       errorOnConnexion = true;
-      _LoginState;
       print("Erreur de connexion : $e");
     }
   }
@@ -86,7 +82,6 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -106,8 +101,7 @@ class _LoginState extends State<Login> {
                   borderRadius: BorderRadius.circular(10),
                   color: Color(0xFFFFFFFF),
                 ),
-                child:
-                Column(
+                child: Column(
                   children: [
                     Text(
                       "Connexion",
@@ -121,7 +115,7 @@ class _LoginState extends State<Login> {
                     SizedBox(height: 10),
                     _buildTextField("Email", emailController),
                     SizedBox(height: 10),
-                    _buildTextField("Mot de passe", passwordController, obscureText: true),
+                    _buildTextField("Mot de passe", passwordController, obscureText: !_isPasswordVisible),
                     SizedBox(height: 10),
                     if (errorOnConnexion) Text(
                       "Email ou mot de passe incorrect",
@@ -221,15 +215,15 @@ class _LoginState extends State<Login> {
                             color: Color(0xFF302082),
                             size: 30,
                           ),
-                          onPressed: () {
-                          },
+                          onPressed: () {},
                         ),
                         IconButton(
                           icon: Icon(
                             FontAwesomeIcons.facebook,
                             color: Color(0xFF302082),
                             size: 30,
-                          ),                            onPressed: () {},
+                          ),
+                          onPressed: () {},
                         ),
                       ],
                     ),
@@ -279,7 +273,20 @@ class _LoginState extends State<Login> {
           borderSide: BorderSide(color: Color(0xFF302082), width: 1),
           borderRadius: BorderRadius.circular(10),
         ),
-        suffixIcon: Icon(icon, color: Color(0xFF302082)),
+        suffixIcon: label.toLowerCase().contains("mot de passe")
+            ? GestureDetector(
+          onTap: () {
+            setState(() {
+              _isPasswordVisible = !_isPasswordVisible; // Toggle visibility
+            });
+          },
+          child: Icon(
+            _isPasswordVisible ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
+            color: Color(0xFF302082), // Change icon when password is visible
+          ),
+        )
+            : Icon(icon, color: Color(0xFF302082)),
       ),
     );
-  }}
+  }
+}

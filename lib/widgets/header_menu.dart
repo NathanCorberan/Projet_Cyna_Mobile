@@ -202,9 +202,7 @@ class _HeaderMenuState extends State<HeaderMenu> {
                 decoration: InputDecoration(
                   hintText: 'Rechercher...',
                   filled: true,
-                  fillColor: Colors.white,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
                     borderSide: BorderSide.none,
                   ),
                   prefixIcon: Icon(Icons.search),
