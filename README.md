@@ -78,5 +78,5 @@ flutter build ios --release
 - **Liova Hovakimyan** - Développement front-end
 
 ## Conclusion
-Ce projet a été un excellent exercice de mise en pratique de nos compétences en développement web et en gestion de projet. Nous espérons que cette plateforme répondra aux attentes de l'entreprise Cyna et de ses clients.
+Ce projet a été un excellent exercice de mise en pratique de nos compétences en développement mobile et en gestion de projet. Nous espérons que cette plateforme répondra aux attentes de l'entreprise Cyna et de ses clients.
 
