@@ -60,7 +60,7 @@ class HomePage extends StatelessWidget {
                 color: Color(0xFFF2F2F2),
               ),
               child: Text(
-                "Voici un texte dans un cadre avec une bordure bleue.",
+                "Aucun évenement en cours ...",
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.black,
