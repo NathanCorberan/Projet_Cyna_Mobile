@@ -7,6 +7,7 @@ import './createAccount.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import '../providers/VarProvider.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 
 class Login extends StatefulWidget  {
   @override
@@ -21,6 +22,7 @@ class _LoginState extends State<Login> {
   void _login() async {
     String email = emailController.text;
     String password = passwordController.text;
+    final varProvider = Provider.of<VarProvider>(context, listen: false);
 
     final String apiUrl = "http://api.juku7704.odns.fr/api/login"; // Remplace par ton URL d'API
 
@@ -38,11 +40,27 @@ class _LoginState extends State<Login> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print("Compte connecté avec succès : ${response.body}");
-        print(response);
+
+        Map<String, dynamic> data = jsonDecode(response.body);
+        String token = data['token'];
+        Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
+
+        //print("Token décodé : $decodedToken");
+
+        final responseUser = await http.get(
+          Uri.parse("http://api.juku7704.odns.fr/api/me"),
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer "+ token,
+          },
+        );
+        //print(responseUser.body);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
+
+        varProvider.updateUserVariable(responseUser.body);
       } else {
         errorOnConnexion = true;
         _LoginState;
@@ -68,7 +86,6 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    final varProvider = Provider.of<VarProvider>(context);
 
     return Scaffold(
       body: SingleChildScrollView( // Ajout du scroll

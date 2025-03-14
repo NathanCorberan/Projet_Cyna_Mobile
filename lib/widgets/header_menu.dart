@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../pages/login.dart';
 import '../pages/home.dart';
+import '../pages/accountParameter.dart';
+import 'package:provider/provider.dart';
+import '../providers/VarProvider.dart';
 
 class HeaderMenu extends StatefulWidget implements PreferredSizeWidget {
   @override
@@ -126,6 +129,7 @@ class _HeaderMenuState extends State<HeaderMenu> {
   }
 
   Widget _menuItem(String title) {
+
     if(title!="Commandes"){
       return TextButton(
         onPressed: _toggleMenu,
@@ -168,6 +172,8 @@ class _HeaderMenuState extends State<HeaderMenu> {
 
   @override
   Widget build(BuildContext context) {
+    final varProvider = Provider.of<VarProvider>(context);
+
     return AppBar(
       backgroundColor: Color(0xFF302082),
       automaticallyImplyLeading: false,
@@ -219,10 +225,19 @@ class _HeaderMenuState extends State<HeaderMenu> {
               if (!_isResearch) IconButton(
                 icon: Icon(Icons.account_circle, color: Colors.white),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Login()), // Création de la page CreateAccount
-                  );
+                  if (varProvider.userVariable == null) {
+                    // Rediriger vers la page de connexion
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Login()), // Création de la page CreateAccount
+                    );
+                  } else {
+                    // Rediriger vers la page de profil
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Accountparameter()),
+                    );
+                  }
                 },
               ),
               if (!_isResearch) IconButton(
