@@ -69,10 +69,7 @@ flutter build apk --release
 ### 2. Générer l'IPA pour iOS (Mac uniquement)
 ```sh
 flutter build ios --release
-```
-
-## Licence
-Ce projet est sous licence **MIT**. Voir le fichier `LICENSE` pour plus de détails.
+``` 
 
 ## Auteur
 Nathan Corberan - [GitHub](https://github.com/nathancorberan)
