@@ -1,9 +1,9 @@
-import '../pages/home.dart';
 import 'package:flutter/material.dart';
 import '../widgets/header_menu.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../providers/VarProvider.dart';
+import './login.dart';
 
 class Accountparameter extends StatefulWidget  {
   @override
@@ -12,6 +12,13 @@ class Accountparameter extends StatefulWidget  {
 
 class _LoginState extends State<Accountparameter> {
   bool _changePassword = false;
+
+  void _goToLogin(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Login()),
+    );
+  }
 
   void _toggleChangePasswordMenu() {
     setState(() {
@@ -25,15 +32,20 @@ class _LoginState extends State<Accountparameter> {
   Widget build(BuildContext context) {
     final varProvider = Provider.of<VarProvider>(context);
 
+    void logout() {
+      varProvider.setUserVariableNull();
+      _goToLogin(context);
+    }
+
     return Scaffold(
-      body: SingleChildScrollView( // Ajout du scroll
+      body: SingleChildScrollView(
         child: Column(
           children: [
             HeaderMenu(),
-            SizedBox(height: 50), // Ajoute un espacement pour ne pas coller le HeaderMenu au Container
-            Center( // Centre le container horizontalement et verticalement
+            SizedBox(height: 50),
+            Center(
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 20), // Espacement à gauche et à droite
+                margin: EdgeInsets.symmetric(horizontal: 20),
                 padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
                 width: MediaQuery.of(context).size.width * 0.8,
                 decoration: BoxDecoration(
@@ -41,8 +53,8 @@ class _LoginState extends State<Accountparameter> {
                     color: Color(0xFF302082),
                     width: 3,
                   ),
-                  borderRadius: BorderRadius.circular(10), // Coins arrondis
-                  color: Color(0xFFFFFFFF), // Fond blanc
+                  borderRadius: BorderRadius.circular(10),
+                  color: Color(0xFFFFFFFF),
                 ),
                 child:
                 Column(
@@ -61,20 +73,20 @@ class _LoginState extends State<Accountparameter> {
                     Column(
                       children: [
                         Row(
-                          children: [  // 20% de la largeur de l'écran
+                          children: [
                             Container(
-                              padding: EdgeInsets.all(8),  // Espacement autour de l'icône (optionnel)
+                              padding: EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Colors.black,  // Couleur de la bordure
-                                  width: 2,  // Épaisseur de la bordure
+                                  color: Colors.black,
+                                  width: 2,
                                 ),
-                                borderRadius: BorderRadius.circular(12),  // Coins arrondis
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: Icon(
                                 FontAwesomeIcons.solidUser,
                                 color: Color(0xFF302082),
-                                size: MediaQuery.of(context).size.width * 0.12,  // Taille de l'icône en fonction de la largeur de l'écran
+                                size: MediaQuery.of(context).size.width * 0.12,
                               ),
                             ),
                             Column(
@@ -96,13 +108,13 @@ class _LoginState extends State<Accountparameter> {
                             border: Border.all(color: Color(0xFF302082), width: 2),
                           ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Aligne le texte à gauche et l'icône à droite
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 "Email",
                                 style: TextStyle(color: Colors.black, fontSize: 16),
                               ),
-                              Icon(Icons.email, color: Color(0xFF302082)), // Se place complètement à droite
+                              Icon(Icons.email, color: Color(0xFF302082)),
                             ],
                           ),
                         ),
@@ -112,10 +124,10 @@ class _LoginState extends State<Accountparameter> {
                             TextButton(
                               style: TextButton.styleFrom(
                                 backgroundColor: Color(0xFFFFFFFF),
-                                shape: RoundedRectangleBorder(  // Rounded corners
+                                shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                overlayColor: Colors.transparent, // Disable the color change on press
+                                overlayColor: Colors.transparent,
                               ),
                               onPressed: _toggleChangePasswordMenu,
                               child: Text(
@@ -141,13 +153,13 @@ class _LoginState extends State<Accountparameter> {
                                   border: Border.all(color: Color(0xFF302082), width: 2),
                                 ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Aligne le texte à gauche et l'icône à droite
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       "Ancien mot de passe",
                                       style: TextStyle(color: Colors.black, fontSize: 16),
                                     ),
-                                    Icon(Icons.email, color: Color(0xFF302082)), // Se place complètement à droite
+                                    Icon(Icons.email, color: Color(0xFF302082)),
                                   ],
                                 ),
                               ),
@@ -161,13 +173,13 @@ class _LoginState extends State<Accountparameter> {
                                   border: Border.all(color: Color(0xFF302082), width: 2),
                                 ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Aligne le texte à gauche et l'icône à droite
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       "Nouveau mot de passe",
                                       style: TextStyle(color: Colors.black, fontSize: 16),
                                     ),
-                                    Icon(Icons.email, color: Color(0xFF302082)), // Se place complètement à droite
+                                    Icon(Icons.email, color: Color(0xFF302082)),
                                   ],
                                 ),
                               ),
@@ -181,17 +193,34 @@ class _LoginState extends State<Accountparameter> {
                                   border: Border.all(color: Color(0xFF302082), width: 2),
                                 ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Aligne le texte à gauche et l'icône à droite
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       "COnfirmation mot de passe",
                                       style: TextStyle(color: Colors.black, fontSize: 16),
                                     ),
-                                    Icon(Icons.email, color: Color(0xFF302082)), // Se place complètement à droite
+                                    Icon(Icons.email, color: Color(0xFF302082)),
                                   ],
                                 ),
                               ),
                               SizedBox(height: 10),
+                              TextButton(
+                                onPressed: logout,
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Color(0xFF302082),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
+                                ),
+                                child: Text(
+                                  "Déconnexion",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         )
@@ -211,7 +240,6 @@ class _LoginState extends State<Accountparameter> {
   Widget _buildTextField(String label, String value, {bool obscureText = false}) {
     IconData icon;
 
-    // Déterminer l'icône en fonction du label
     switch (label.toLowerCase()) {
       case "email":
         icon = Icons.email;
@@ -225,7 +253,7 @@ class _LoginState extends State<Accountparameter> {
         icon = Icons.lock;
         break;
       default:
-        icon = Icons.text_fields; // Icône par défaut
+        icon = Icons.text_fields;
     }
 
     return Container(
@@ -238,13 +266,13 @@ class _LoginState extends State<Accountparameter> {
         border: Border.all(color: Color(0xFF302082), width: 2),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Aligne le texte à gauche et l'icône à droite
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             value,
             style: TextStyle(color: Colors.black, fontSize: 16),
           ),
-          Icon(icon, color: Color(0xFF302082)), // Se place complètement à droite
+          Icon(icon, color: Color(0xFF302082)),
         ],
       ),
     );

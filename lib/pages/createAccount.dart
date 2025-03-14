@@ -34,7 +34,7 @@ class _CreateAccountState extends State<CreateAccount> {
       return;
     }
 
-    final String apiUrl = "http://api.juku7704.odns.fr/api/users"; // Remplace par ton URL d'API
+    final String apiUrl = "http://api.juku7704.odns.fr/api/users";
 
     try {
       final response = await http.post(
@@ -81,14 +81,14 @@ class _CreateAccountState extends State<CreateAccount> {
     final varProvider = Provider.of<VarProvider>(context);
 
     return Scaffold(
-      body: SingleChildScrollView( // Ajout du scroll
+      body: SingleChildScrollView(
         child: Column(
           children: [
             HeaderMenu(),
-            SizedBox(height: 50), // Ajoute un espacement pour ne pas coller le HeaderMenu au Container
-            Center( // Centre le container horizontalement et verticalement
+            SizedBox(height: 50),
+            Center(
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 20), // Espacement à gauche et à droite
+                margin: EdgeInsets.symmetric(horizontal: 20),
                 padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
                 width: MediaQuery.of(context).size.width * 0.8,
                 decoration: BoxDecoration(
@@ -96,8 +96,8 @@ class _CreateAccountState extends State<CreateAccount> {
                     color: Color(0xFF302082),
                     width: 3,
                   ),
-                  borderRadius: BorderRadius.circular(10), // Coins arrondis
-                  color: Color(0xFFFFFFFF), // Fond blanc
+                  borderRadius: BorderRadius.circular(10),
+                  color: Color(0xFFFFFFFF),
                 ),
                 child:
                   Column(
@@ -132,18 +132,18 @@ class _CreateAccountState extends State<CreateAccount> {
                       ),
                       SizedBox(height: 10),
                       TextButton(
-                        onPressed: _createAccount, // Remplacez par votre fonction d'action
+                        onPressed: _createAccount,
                         style: TextButton.styleFrom(
-                          backgroundColor: Color(0xFF302082), // Fond bleu #302082
+                          backgroundColor: Color(0xFF302082),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12), // Coins arrondis
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15), // Espacement interne du bouton
+                          padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                         ),
                         child: Text(
                           "Créer un compte",
                           style: TextStyle(
-                            color: Colors.white, // Texte blanc
+                            color: Colors.white,
                             fontSize: 16,
                           ),
                         ),
@@ -163,10 +163,10 @@ class _CreateAccountState extends State<CreateAccount> {
                           TextButton(
                             style: TextButton.styleFrom(
                               backgroundColor: Color(0xFFFFFFFF),
-                              shape: RoundedRectangleBorder(  // Rounded corners
+                              shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              overlayColor: Colors.transparent, // Disable the color change on press
+                              overlayColor: Colors.transparent,
                             ),
                             onPressed: () => _goToLogin(context),
                                 child: Text(
@@ -181,8 +181,8 @@ class _CreateAccountState extends State<CreateAccount> {
                         ],
                       ),
                       Container(
-                        height: 2.0,  // Hauteur du trait
-                        color: Color(0xFF302082),  // Couleur bleue du trait
+                        height: 2.0,
+                        color: Color(0xFF302082),
                       ),
                       SizedBox(height: 10),
                       Text(
@@ -229,7 +229,6 @@ class _CreateAccountState extends State<CreateAccount> {
   Widget _buildTextField(String label, TextEditingController controller, {bool obscureText = false}) {
     IconData icon;
 
-    // Déterminer l'icône en fonction du label
     switch (label.toLowerCase()) {
       case "email":
         icon = Icons.email;
@@ -243,7 +242,7 @@ class _CreateAccountState extends State<CreateAccount> {
         icon = Icons.lock;
         break;
       default:
-        icon = Icons.text_fields; // Icône par défaut
+        icon = Icons.text_fields;
     }
 
     return TextField(
@@ -262,7 +261,7 @@ class _CreateAccountState extends State<CreateAccount> {
           borderSide: BorderSide(color: Color(0xFF302082), width: 1),
           borderRadius: BorderRadius.circular(10),
         ),
-        suffixIcon: Icon(icon, color: Color(0xFF302082)), // Ajout de l'icône à droite
+        suffixIcon: Icon(icon, color: Color(0xFF302082)),
       ),
     );
   }

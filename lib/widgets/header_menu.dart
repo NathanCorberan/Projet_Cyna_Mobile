@@ -11,7 +11,7 @@ class HeaderMenu extends StatefulWidget implements PreferredSizeWidget {
   _HeaderMenuState createState() => _HeaderMenuState();
 
   @override
-  Size get preferredSize => Size.fromHeight(80.0); // Hauteur de l'AppBar
+  Size get preferredSize => Size.fromHeight(80.0);
 }
 
 class _HeaderMenuState extends State<HeaderMenu> {
@@ -74,7 +74,7 @@ class _HeaderMenuState extends State<HeaderMenu> {
   OverlayEntry _createOverlayEntry() {
     return OverlayEntry(
       builder: (context) => Positioned(
-        top: 105, // Juste en dessous de l'AppBar
+        top: 105,
         bottom: 0,
         right: 0,
         width: 200,
@@ -114,7 +114,7 @@ class _HeaderMenuState extends State<HeaderMenu> {
                       ),
                     ],
                   ),
-                Expanded(child: Container()), // Espacement
+                Expanded(child: Container()),
                 _menuItem("Mentions légales"),
                 _menuItem("CGU"),
                 _menuItem("Contact"),
@@ -182,10 +182,9 @@ class _HeaderMenuState extends State<HeaderMenu> {
         children: [
           GestureDetector(
             onTap: () {
-              // Lorsque l'image est cliquée, rediriger vers la page HomePage
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage()), // Page HomePage
+                MaterialPageRoute(builder: (context) => HomePage()),
               );
             },
             child: Image.network(
@@ -225,13 +224,11 @@ class _HeaderMenuState extends State<HeaderMenu> {
                 icon: Icon(Icons.account_circle, color: Colors.white),
                 onPressed: () {
                   if (varProvider.userVariable == null) {
-                    // Rediriger vers la page de connexion
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Login()), // Création de la page CreateAccount
+                      MaterialPageRoute(builder: (context) => Login()),
                     );
                   } else {
-                    // Rediriger vers la page de profil
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => Accountparameter()),

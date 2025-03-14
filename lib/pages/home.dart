@@ -34,10 +34,10 @@ class HomePage extends StatelessWidget {
     final varProvider = Provider.of<VarProvider>(context);
 
     return Scaffold(
-      body: SingleChildScrollView( // Ajout du scroll
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            HeaderMenu(), // Header avec le menu intégré
+            HeaderMenu(),
             SizedBox(height: 40),
             Text(
               "Actualité et nouveauté",
@@ -49,15 +49,15 @@ class HomePage extends StatelessWidget {
             ),
             Container(
               margin: EdgeInsets.only(left: 20, right: 20, top: 10),
-              padding: EdgeInsets.all(10), // Espace interne
+              padding: EdgeInsets.all(10),
               height: 150,
               decoration: BoxDecoration(
                 border: Border.all(
                   color: Color(0xFF302082),
                   width: 3,
                 ),
-                borderRadius: BorderRadius.circular(10), // Coins arrondis
-                color: Color(0xFFF2F2F2), // Fond blanc
+                borderRadius: BorderRadius.circular(10),
+                color: Color(0xFFF2F2F2),
               ),
               child: Text(
                 "Voici un texte dans un cadre avec une bordure bleue.",
@@ -83,31 +83,31 @@ class HomePage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: GridView.builder(
-                  shrinkWrap: true, // Permet au GridView de prendre seulement l'espace nécessaire
-                  physics: NeverScrollableScrollPhysics(), // Désactive le scrolling interne du GridView
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3, // Nombre de colonnes
-                    crossAxisSpacing: MediaQuery.of(context).size.width * 0.05, // Espacement horizontal de 5%
-                    mainAxisSpacing: MediaQuery.of(context).size.width * 0.05, // Espacement vertical de 5%
-                    childAspectRatio: 1, // Ajuste la hauteur/largeur des cases pour une proportion carrée
+                    crossAxisCount: 3,
+                    crossAxisSpacing: MediaQuery.of(context).size.width * 0.05,
+                    mainAxisSpacing: MediaQuery.of(context).size.width * 0.05,
+                    childAspectRatio: 1,
                   ),
-                  itemCount: categories.length, // Le nombre d'éléments à afficher
+                  itemCount: categories.length,
                   itemBuilder: (context, index) {
                     return Container(
                       padding: EdgeInsets.all(10),
-                      alignment: Alignment.center, // Centrage du texte horizontal et vertical
+                      alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Color(0xFF302082), // Fond de la case
-                        borderRadius: BorderRadius.circular(12), // Bordures arrondies
+                        color: Color(0xFF302082),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         categories[index],
                         style: TextStyle(
-                          color: Colors.white, // Couleur du texte
-                          fontSize: 16, // Taille du texte
+                          color: Colors.white,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
-                        textAlign: TextAlign.center, // Centrage du texte horizontalement
+                        textAlign: TextAlign.center,
                       ),
                     );
                   },
@@ -129,32 +129,32 @@ class HomePage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: GridView.builder(
-                  shrinkWrap: true, // Permet au GridView de prendre seulement l'espace nécessaire
-                  physics: NeverScrollableScrollPhysics(), // Désactive le scrolling interne du GridView
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1, // Nombre de colonnes
-                    crossAxisSpacing: MediaQuery.of(context).size.width * 0.05, // Espacement horizontal de 5%
-                    mainAxisSpacing: MediaQuery.of(context).size.width * 0.05, // Espacement vertical de 5%
+                    crossAxisCount: 1,
+                    crossAxisSpacing: MediaQuery.of(context).size.width * 0.05,
+                    mainAxisSpacing: MediaQuery.of(context).size.width * 0.05,
                   ),
-                  itemCount: products.length, // Le nombre d'éléments à afficher
+                  itemCount: products.length,
                   itemBuilder: (context, index) {
                     return Container(
                       padding: EdgeInsets.all(10),
-                      alignment: Alignment.center, // Centrage du texte horizontal et vertical
+                      alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Color(0xFF302082), // Fond de la case
+                        color: Color(0xFF302082),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      width: MediaQuery.of(context).size.width * 0.8, // Fixe la largeur à 80% de la largeur de l'écran
+                      width: MediaQuery.of(context).size.width * 0.8,
                       child: IntrinsicHeight(
                         child: Column(
-                          mainAxisSize: MainAxisSize.min, // La colonne s'adapte à la hauteur du contenu
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Image.asset(
                               products[index]['image']!,
-                              fit: BoxFit.cover, // Utilisation de BoxFit.cover pour ajuster l'image
-                              width: double.infinity, // Prend toute la largeur disponible
-                              height: 200, // Fixe une hauteur pour l'image
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: 200,
                             ),
                             SizedBox(height: 20),
                             Text(

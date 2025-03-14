@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Color(0xFF302082),
       ),
-      home: HomePage(), // Afficher HomePage
+      home: HomePage(),
     );
   }
 }

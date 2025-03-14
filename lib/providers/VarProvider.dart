@@ -24,9 +24,13 @@ class VarProvider extends ChangeNotifier {
 
   User? get userVariable => _userVariable;
 
+  void setUserVariableNull() {
+    _userVariable = null;
+    print(_userVariable);
+    notifyListeners();
+  }
+
   void updateUserVariable(Object newValue) {
-    print("Type de newValue: ${newValue.runtimeType}");
-    print("Valeur de newValue: $newValue");
 
     if (newValue is String) {
       try {
@@ -37,7 +41,6 @@ class VarProvider extends ChangeNotifier {
       }
     }
 
-    // Vérification que newValue est bien un Map<String, dynamic>
     if (newValue is Map<String, dynamic>) {
       _userVariable ??= User(first_name: '', last_name: '', email: '');
 
@@ -46,7 +49,7 @@ class VarProvider extends ChangeNotifier {
       _userVariable!.last_name = newValue['last_name'] ?? _userVariable!.last_name;
 
       notifyListeners();
-      print("✅ Utilisateur mis à jour : $_userVariable");
+      print(" Utilisateur mis à jour : $_userVariable");
     } else {
       print("Erreur");
     }
