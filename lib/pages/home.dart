@@ -1,33 +1,47 @@
+import 'package:cynamobile/apiRequest/get_product.dart';
 import 'package:flutter/material.dart';
 import '../widgets/header_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:cynamobile/providers/VarProvider.dart';
+import '../apiRequest/get_categorie.dart'; // Importation du fichier API
 
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
 
-class HomePage extends StatelessWidget {
-  List<String> categories = [
-    "SOC", "EDR", "XDR", "IAM", "Sécurité Cloud", "Sécurité Applis",
-    "Protection APT", "Gestion Risques", "Sécurité Réseaux",
-    "Sécurisation Données", "SD-WAN Security"
-  ];
+class _HomePageState extends State<HomePage> {
+  List<String> categories = [];
+  List<Map<String, dynamic>> products = [];
 
-  List<Map<String, String>> products = [
-    {
-      "name": "Firewall Avancé",
-      "description": "Protégez votre réseau avec un pare-feu avancé.",
-      "image": "assets/images/firewall.jpeg"
-    },
-    {
-      "name": "Antivirus Pro",
-      "description": "Détection et suppression des menaces en temps réel.",
-      "image": "assets/images/antivirus.png"
-    },
-    {
-      "name": "Cloud Security",
-      "description": "Sécurisez vos données et applications dans le cloud.",
-      "image": "assets/images/cloud_security.jpg"
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+    _loadTopProduct();
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      List<String> fetchedCategorie = await GetCategorie.fetchCategorie();
+      setState(() {
+        categories = fetchedCategorie;
+      });
+    } catch (e) {
+      print("Erreur lors du chargement des catégories: $e");
     }
-  ];
+  }
+
+  Future<void> _loadTopProduct() async {
+    try {
+      List<Map<String, dynamic>> fetchedTopProduct = await GetTopProduct.fetchTopProduct();
+      setState(() {
+        products = fetchedTopProduct;
+      });
+    } catch (e) {
+      print("Erreur lors du chargement des produits: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +63,7 @@ class HomePage extends StatelessWidget {
             ),
             Container(
               margin: EdgeInsets.only(left: 20, right: 20, top: 10),
+              width: MediaQuery.of(context).size.width * 0.9,
               padding: EdgeInsets.all(10),
               height: 150,
               decoration: BoxDecoration(
@@ -65,7 +80,7 @@ class HomePage extends StatelessWidget {
                   fontSize: 16,
                   color: Colors.black,
                 ),
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.left,
               ),
             ),
             SizedBox(height: 40),
@@ -124,55 +139,56 @@ class HomePage extends StatelessWidget {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(left: 20, right: 20, top: 10),
+              margin: EdgeInsets.only(left: 20, right: 20),
               padding: EdgeInsets.all(5),
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: GridView.builder(
+                child: ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    crossAxisSpacing: MediaQuery.of(context).size.width * 0.05,
-                    mainAxisSpacing: MediaQuery.of(context).size.width * 0.05,
-                  ),
                   itemCount: products.length,
                   itemBuilder: (context, index) {
-                    return Container(
-                      padding: EdgeInsets.all(10),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Color(0xFF302082),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      child: IntrinsicHeight(
+                    var product = products[index];
+
+                    String productName = product['name'] ?? 'Nom indisponible';
+                    String productDescription = product['description'] ?? 'Description indisponible';
+                    String productImage = product['image'] ?? '';
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 20), // Ajout d'un espace entre les blocs
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF302082),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Image.asset(
-                              products[index]['image']!,
+                            productImage.isNotEmpty
+                                ? Image.network(
+                              productImage,
                               fit: BoxFit.cover,
                               width: double.infinity,
                               height: 200,
+                            )
+                                : Container(
+                              color: Colors.grey,
+                              height: 200,
+                              width: double.infinity,
+                              child: Center(child: Text("Image non disponible")),
                             ),
-                            SizedBox(height: 20),
+                            SizedBox(height: 20), // Espacement après l'image
                             Text(
-                              products[index]['name']!,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              productName,
+                              style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
-                            SizedBox(height: 10),
+                            SizedBox(height: 10), // Espacement après le nom
                             Text(
-                              products[index]['description']!,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
+                              productDescription,
+                              style: TextStyle(color: Colors.white, fontSize: 18),
                               textAlign: TextAlign.center,
                             ),
                           ],
