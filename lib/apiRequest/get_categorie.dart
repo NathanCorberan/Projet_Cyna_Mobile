@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 class GetCategorie {
   static const String _url = 'http://api.juku7704.odns.fr/api/categories';
 
-  static Future<List<String>> fetchCategorie() async {
+  static Future<List<dynamic>> fetchCategorie() async {
     try {
       final response = await http.get(Uri.parse(_url));
 
@@ -13,10 +13,9 @@ class GetCategorie {
 
         if (jsonResponse.containsKey('member')) {
           List<dynamic> categories = jsonResponse['member'];
-
-          List<String> categoryNames = categories.map((item) => item['name'] as String).toList();
-
-          return categoryNames;
+          print(categories);
+          //List<String> categoryNames = categories.map((item) => item['name'] as String).toList();
+          return categories;
         } else {
           throw Exception('La clé "member" est absente dans la réponse.');
         }

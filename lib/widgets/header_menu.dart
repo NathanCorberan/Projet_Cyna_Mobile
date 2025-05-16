@@ -5,6 +5,8 @@ import '../pages/home.dart';
 import '../pages/accountParameter.dart';
 import 'package:provider/provider.dart';
 import '../providers/VarProvider.dart';
+import '../pages/categorie.dart';
+import '../pages/product.dart';
 
 class HeaderMenu extends StatefulWidget implements PreferredSizeWidget {
   @override
@@ -85,35 +87,9 @@ class _HeaderMenuState extends State<HeaderMenu> {
             child: Column(
               children: [
                 _menuItem("Catégorie"),
-                _menuItem("Recherche"),
                 _menuItem("Produit"),
+                _menuItem("Recherche"),
                 _menuItem("Commandes"),
-                if (_isCommandeOpen)
-                  Column(
-                    children: [
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          "Option 1",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          "Option 2",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          "Option 3",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ),
-                    ],
-                  ),
                 Expanded(child: Container()),
                 _menuItem("Mentions légales"),
                 _menuItem("CGU"),
@@ -128,34 +104,20 @@ class _HeaderMenuState extends State<HeaderMenu> {
   }
 
   Widget _menuItem(String title) {
+    return TextButton(
+      onPressed: () {
+        _toggleMenu();
 
-    if(title!="Commandes"){
-      return TextButton(
-        onPressed: _toggleMenu,
-        child: Text(title, style: TextStyle(color: Colors.white, fontSize: 20)),
-      );
-    }else{
-      return TextButton(
-        onPressed: _toggleCommandeMenu,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Commandes",
-              style: TextStyle(color: Colors.white, fontSize: 20),
-            ),
-            Icon(
-              _isCommandeOpen
-                  ? Icons.keyboard_arrow_down
-                  : Icons.keyboard_arrow_right,
-              color: Colors.white,
-            ),
-          ],
-        ),
-      );
-    }
-
+        if (title == "Catégorie") {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const Categorie()));
+        } else if (title == "Produit") {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const ProductPage()));
+        }
+      },
+      child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 20)),
+    );
   }
+
 
   Widget _socialIcons() {
     return Row(

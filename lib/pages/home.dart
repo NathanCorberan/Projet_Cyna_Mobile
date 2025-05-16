@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../widgets/header_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:cynamobile/providers/VarProvider.dart';
-import '../apiRequest/get_categorie.dart'; // Importation du fichier API
+import '../apiRequest/get_categorie.dart';
+import 'package:cynamobile/pages/CategorieDetail.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,7 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<String> categories = [];
+  List<dynamic> categories = [];
   List<Map<String, dynamic>> products = [];
 
   @override
@@ -23,7 +24,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadCategories() async {
     try {
-      List<String> fetchedCategorie = await GetCategorie.fetchCategorie();
+      List<dynamic> fetchedCategorie = await GetCategorie.fetchCategorie();
       setState(() {
         categories = fetchedCategorie;
       });
@@ -108,21 +109,33 @@ class _HomePageState extends State<HomePage> {
                   ),
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
-                    return Container(
-                      padding: EdgeInsets.all(10),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Color(0xFF302082),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        categories[index],
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CategorieDetail(
+                              categoryData: categories,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF302082),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        textAlign: TextAlign.center,
+                        child: Text(
+                          categories[index]['name'],
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     );
                   },
@@ -152,7 +165,7 @@ class _HomePageState extends State<HomePage> {
 
                     String productName = product['name'] ?? 'Nom indisponible';
                     String productDescription = product['description'] ?? 'Description indisponible';
-                    String productImage = product['image'] ?? '';
+                    String productImage = "http://${product['image'] ?? ''}";
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 20), // Ajout d'un espace entre les blocs
