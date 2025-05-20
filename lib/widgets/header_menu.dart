@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import '../providers/VarProvider.dart';
 import '../pages/categorie.dart';
 import '../pages/product.dart';
+import '../pages/panier.dart';
+
 
 class HeaderMenu extends StatefulWidget implements PreferredSizeWidget {
   @override
@@ -177,7 +179,10 @@ class _HeaderMenuState extends State<HeaderMenu> {
               if (!_isResearch) IconButton(
                 icon: Icon(Icons.shopping_cart, color: Colors.white),
                 onPressed: () {
-
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PanierPage()),
+                  );
                 },
               ),
               if (!_isResearch) IconButton(
