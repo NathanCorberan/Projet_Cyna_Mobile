@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../apiRequest/get_product.dart';
+import 'package:cynamobile/pages/productDetail.dart'; // ← Ajoute cette ligne
 
 class ProductPage extends StatefulWidget {
   const ProductPage({Key? key}) : super(key: key);
@@ -63,67 +64,77 @@ class _ProductPageState extends State<ProductPage> {
                     itemCount: products.length,
                     itemBuilder: (context, index) {
                       final product = products[index];
-                      return Card(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        elevation: 4,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                                child: Image.network(
-                                  product['image'] ?? '',
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.image_not_supported),
-                                ),
-                              ),
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ProductDetailPage(product: product),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              child: Center(
-                                child: Text(
-                                  product['name'] ?? '',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Center(
-                                child: Text(
-                                  product['description'] ?? '',
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                            const Spacer(),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    product['price'] ?? '',
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                          );
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          elevation: 4,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                  child: Image.network(
+                                    product['image'] ?? '',
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(Icons.image_not_supported),
                                   ),
-                                  Text(
-                                    product['stock'] ?? '',
-                                    style: TextStyle(
-                                      color: product['stock'] == 'Disponible' ? Colors.green : Colors.red,
-                                      fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                child: Center(
+                                  child: Text(
+                                    product['name'] ?? '',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Center(
+                                  child: Text(
+                                    product['description'] ?? '',
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              const Spacer(),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      product['price'] ?? '',
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      product['stock'] ?? '',
+                                      style: TextStyle(
+                                        color: product['stock'] == 'Disponible' ? Colors.green : Colors.red,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     },
