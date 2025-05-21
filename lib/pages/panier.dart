@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
+import '../models/cart_item.dart';
 
 class PanierPage extends StatelessWidget {
   const PanierPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<CartProvider>(context);
+    final items = cart.items;
+
+    double total = 0;
+    for (var item in items) {
+      final price = double.tryParse(item.price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0;
+      total += price * item.quantity;
+    }
+
+    const shipping = 4.99;
+    final totalWithShipping = total + shipping;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -14,7 +29,9 @@ class PanierPage extends StatelessWidget {
         backgroundColor: const Color(0xFF302082),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: items.isEmpty
+            ? const Center(child: Text("Votre panier est vide."))
+            : SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,11 +41,11 @@ class PanierPage extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              ...List.generate(3, (index) => _buildCartItem(context)),
+              ...items.map((item) => _buildCartItem(context, item)).toList(),
               const SizedBox(height: 24),
-              _buildSummaryBox(context),
+              _buildSummaryBox(context, total, shipping, totalWithShipping),
               const SizedBox(height: 16),
-              _buildCheckoutButton(context),
+              _buildCheckoutButton(context, cart),
             ],
           ),
         ),
@@ -36,66 +53,89 @@ class PanierPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCartItem(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Icon(Icons.image, size: 40),
+  Widget _buildCartItem(BuildContext context, CartItem item) {
+    final cart = Provider.of<CartProvider>(context, listen: false);
+
+    return Stack(
+      children: [
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(12),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Nom du produit",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              item.image.isNotEmpty
+                  ? ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  item.image,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) =>
+                  const Icon(Icons.broken_image, size: 40),
                 ),
-                const SizedBox(height: 4),
-                const Text("Description courte du produit."),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              )
+                  : Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.image, size: 40),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Prix: 19.99€"),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.remove),
-                          onPressed: () {},
-                        ),
-                        const Text("1"),
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: () {},
-                        ),
-                      ],
-                    )
+                    Text(
+                      item.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Text("Prix unitaire : ${item.price}"),
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () => cart.removeFromCart(item),
+                      ),
+                    ),
                   ],
-                )
-              ],
+                ),
+              )
+            ],
+          ),
+        ),
+        if (item.quantity > 1)
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                '${item.quantity}',
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+              ),
             ),
-          )
-        ],
-      ),
+          ),
+      ],
     );
   }
 
-  Widget _buildSummaryBox(BuildContext context) {
+  Widget _buildSummaryBox(
+      BuildContext context, double subtotal, double shipping, double total) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -104,13 +144,13 @@ class PanierPage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildSummaryRow("Sous-total", "59.97€"),
+          _buildSummaryRow("Sous-total", "${subtotal.toStringAsFixed(2)}€"),
           const SizedBox(height: 8),
-          _buildSummaryRow("Frais de port", "4.99€"),
+          _buildSummaryRow("Frais de port", "${shipping.toStringAsFixed(2)}€"),
           const SizedBox(height: 8),
           const Divider(thickness: 1),
           const SizedBox(height: 8),
-          _buildSummaryRow("Total", "64.96€", isBold: true),
+          _buildSummaryRow("Total", "${total.toStringAsFixed(2)}€", isBold: true),
         ],
       ),
     );
@@ -122,34 +162,35 @@ class PanierPage extends StatelessWidget {
       children: [
         Text(
           label,
-          style: isBold
-              ? const TextStyle(fontWeight: FontWeight.bold)
-              : const TextStyle(),
+          style:
+          isBold ? const TextStyle(fontWeight: FontWeight.bold) : const TextStyle(),
         ),
         Text(
           amount,
-          style: isBold
-              ? const TextStyle(fontWeight: FontWeight.bold)
-              : const TextStyle(),
+          style:
+          isBold ? const TextStyle(fontWeight: FontWeight.bold) : const TextStyle(),
         ),
       ],
     );
   }
 
-  Widget _buildCheckoutButton(BuildContext context) {
+  Widget _buildCheckoutButton(BuildContext context, CartProvider cartProvider) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          // Action du bouton de paiement
+          cartProvider.clearCart();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Commande passée avec succès")),
+          );
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF302082), // violet foncé
+          backgroundColor: const Color(0xFF302082),
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
         child: const Text(
           "Procéder au paiement",
-          style: TextStyle(color: Colors.white), // texte blanc
+          style: TextStyle(color: Colors.white),
         ),
       ),
     );

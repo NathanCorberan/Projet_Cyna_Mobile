@@ -1,16 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
+import '../models/cart_item.dart';
 
 class ProductDetailPage extends StatelessWidget {
-  final Map<String, String> product;
+  final Map<String, dynamic> product;
 
   const ProductDetailPage({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(product['name'] ?? 'Détail du produit'),
+        title: const Text(
+          'Détails du produit',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: const Color(0xFF302082),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () {
+              Navigator.pushNamed(context, '/cart');
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -24,8 +40,6 @@ class ProductDetailPage extends StatelessWidget {
                 const Icon(Icons.broken_image, size: 100),
               ),
             const SizedBox(height: 16),
-
-            // Nom du produit
             Text(
               product['name'] ?? 'Nom inconnu',
               style: const TextStyle(
@@ -36,22 +50,16 @@ class ProductDetailPage extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-
-            // Description
             Text(
               product['description'] ?? 'Aucune description',
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
-
-            // Prix
             Text(
               'Prix : ${product['price'] ?? '-'}',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-
-            // Stock
             Text(
               'Stock : ${product['stock'] ?? '-'}',
               style: TextStyle(
@@ -60,25 +68,27 @@ class ProductDetailPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-
-            // Bouton Ajouter au panier
             ElevatedButton(
               onPressed: () {
-                // TODO: Ajouter la logique d'ajout au panier ici
+                cartProvider.addToCart(
+                  CartItem(
+                    name: product['name'] ?? '',
+                    price: product['price'] ?? '',
+                    image: product['image'] ?? '',
+                  ),
+                );
+
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Produit ajouté au panier')),
+                  const SnackBar(content: Text("Produit ajouté au panier")),
                 );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF302082),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 12),
               ),
               child: const Text(
                 'Ajouter au panier',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ],
