@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../apiRequest/get_product.dart';
 import 'package:cynamobile/pages/productDetail.dart';
-import 'package:cynamobile/widgets/product_card.dart'; // ← Import du widget réutilisable
+import 'package:cynamobile/widgets/product_card.dart';
 
 class ProductPage extends StatefulWidget {
   const ProductPage({Key? key}) : super(key: key);

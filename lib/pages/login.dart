@@ -18,7 +18,7 @@ class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool errorOnConnexion = false;
-  bool _isPasswordVisible = false; // Variable pour afficher ou masquer le mot de passe
+  bool _isPasswordVisible = false;
 
   void _login() async {
     String email = emailController.text;
@@ -83,7 +83,6 @@ class _LoginState extends State<Login> {
   }
 
   void _goToChangePassword(BuildContext context) {
-    // TODO aller a changer de mot de passe
   }
 
   @override
@@ -283,12 +282,12 @@ class _LoginState extends State<Login> {
             ? GestureDetector(
           onTap: () {
             setState(() {
-              _isPasswordVisible = !_isPasswordVisible; // Toggle visibility
+              _isPasswordVisible = !_isPasswordVisible;
             });
           },
           child: Icon(
             _isPasswordVisible ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
-            color: Color(0xFF302082), // Change icon when password is visible
+            color: Color(0xFF302082),
           ),
         )
             : Icon(icon, color: Color(0xFF302082)),

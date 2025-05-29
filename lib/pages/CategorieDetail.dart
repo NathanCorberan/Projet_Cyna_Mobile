@@ -3,13 +3,12 @@ import 'package:cynamobile/apiRequest/getProductByCategorie.dart';
 import 'productDetail.dart';
 
 class CategorieDetail extends StatelessWidget {
-  final List<dynamic> categoryData; // Typé comme liste
+  final List<dynamic> categoryData;
 
   const CategorieDetail({Key? key, required this.categoryData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Récupération sécurisée des infos de la catégorie
     String imageUrl = categoryData.isNotEmpty && categoryData[0]['imageLink'] != null
         ? "http://${categoryData[0]['imageLink']}"
         : '';

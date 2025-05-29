@@ -20,7 +20,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // On ne peut pas utiliser context dans initState, donc on reporte au didChangeDependencies
   }
 
   @override
@@ -113,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    childAspectRatio: 0.8, // Ajuste selon la taille souhaitée
+                    childAspectRatio: 0.8,
                   ),
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
@@ -128,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => CategorieDetail(
-                              categoryData: [category], // Envoie la catégorie sélectionnée seule
+                              categoryData: [category],
                             ),
                           ),
                         );
@@ -193,7 +192,7 @@ class _HomePageState extends State<HomePage> {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 20),
                     child: SizedBox(
-                      height: 320, // Hauteur adaptée à la carte
+                      height: 320,
                       child: ProductCard(
                         product: product,
                         onTap: () {

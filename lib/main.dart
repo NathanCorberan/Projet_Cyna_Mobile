@@ -3,7 +3,7 @@ import 'pages/home.dart';
 import 'package:provider/provider.dart';
 import 'providers/var_provider.dart';
 import 'providers/cart_provider.dart';
-import 'pages/panier.dart'; // Assure-toi que le nom du fichier est correct
+import 'pages/panier.dart';
 
 void main() {
   runApp(

@@ -17,7 +17,6 @@ class _CategorieState extends State<Categorie> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Charger les données après que le context est disponible
     futureCategories = GetCategorie.fetchCategorie(context);
   }
 

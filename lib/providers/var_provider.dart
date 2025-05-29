@@ -10,7 +10,6 @@ class User {
 }
 
 class VarProvider extends ChangeNotifier {
-  // Variable partagée
   String _sharedVariable = "Valeur initiale";
 
   String get sharedVariable => _sharedVariable;
@@ -20,10 +19,8 @@ class VarProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // URL de base de l'API
   final String url = "http://srv839278.hstgr.cloud:8000/api";
 
-  // Variable utilisateur
   User? _userVariable;
 
   User? get userVariable => _userVariable;
