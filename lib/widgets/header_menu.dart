@@ -4,7 +4,7 @@ import '../pages/login.dart';
 import '../pages/home.dart';
 import '../pages/accountParameter.dart';
 import 'package:provider/provider.dart';
-import '../providers/VarProvider.dart';
+import '../providers/var_provider.dart';
 import '../pages/categorie.dart';
 import '../pages/product.dart';
 import '../pages/panier.dart';

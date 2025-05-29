@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
+import '../providers/var_provider.dart';
 
 class GetCategorie {
-  static const String _url = 'http://api.juku7704.odns.fr/api/categories';
+  static Future<List<dynamic>> fetchCategorie(BuildContext context) async {
+    final varProvider = Provider.of<VarProvider>(context, listen: false);
+    final String url = '${varProvider.url}/categories';
 
-  static Future<List<dynamic>> fetchCategorie() async {
     try {
-      final response = await http.get(Uri.parse(_url));
+      final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = json.decode(response.body);
@@ -14,7 +18,6 @@ class GetCategorie {
         if (jsonResponse.containsKey('member')) {
           List<dynamic> categories = jsonResponse['member'];
           print(categories);
-          //List<String> categoryNames = categories.map((item) => item['name'] as String).toList();
           return categories;
         } else {
           throw Exception('La clé "member" est absente dans la réponse.');

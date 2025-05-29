@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/var_provider.dart';
 
 class Product {
   final String name;
@@ -18,8 +21,9 @@ class Product {
 }
 
 class GetProductByCategorie {
-  static Future<List<Product>> fetchProductsByCategorie(int categoryId) async {
-    final url = 'http://api.juku7704.odns.fr/api/categorie/$categoryId/products?page=1';
+  static Future<List<Product>> fetchProductsByCategorie(BuildContext context, int categoryId) async {
+    final varProvider = Provider.of<VarProvider>(context, listen: false);
+    final url = '${varProvider.url}/categorie/$categoryId/products?page=1';
 
     try {
       final response = await http.get(Uri.parse(url));

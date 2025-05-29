@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:cynamobile/apiRequest/getProductByCategorie.dart';
 
 class CategorieDetail extends StatelessWidget {
-  final dynamic categoryData;
+  final List<dynamic> categoryData; // Typé comme liste
 
   const CategorieDetail({Key? key, required this.categoryData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String imageUrl = "http://${categoryData[0]['imageLink']}";
-    String categoryName = categoryData[0]['name'];
+    // Récupération sécurisée des infos de la catégorie
+    String imageUrl = categoryData.isNotEmpty && categoryData[0]['imageLink'] != null
+        ? "http://${categoryData[0]['imageLink']}"
+        : '';
+
+    String categoryName = categoryData.isNotEmpty && categoryData[0]['name'] != null
+        ? categoryData[0]['name']
+        : 'Nom inconnu';
 
     return Scaffold(
       appBar: AppBar(
@@ -27,11 +33,14 @@ class CategorieDetail extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 height: MediaQuery.of(context).size.height * 0.25,
-                child: Image.network(
+                child: imageUrl.isNotEmpty
+                    ? Image.network(
                   imageUrl,
                   fit: BoxFit.cover,
                   alignment: Alignment.topCenter,
-                ),
+                  errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
+                )
+                    : const Center(child: Icon(Icons.image_not_supported)),
               ),
               Positioned.fill(
                 child: Center(
@@ -43,7 +52,7 @@ class CategorieDetail extends StatelessWidget {
                           fontSize: 60,
                           fontWeight: FontWeight.bold,
                           color: Colors.transparent,
-                          shadows: [
+                          shadows: const [
                             Shadow(color: Colors.white, offset: Offset(0, 0)),
                           ],
                         ),
@@ -65,7 +74,7 @@ class CategorieDetail extends StatelessWidget {
           const SizedBox(height: 20),
           Expanded(
             child: FutureBuilder<List<Product>>(
-              future: GetProductByCategorie.fetchProductsByCategorie(categoryData[0]['id']),
+              future: GetProductByCategorie.fetchProductsByCategorie(context, categoryData[0]['id']),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -128,7 +137,7 @@ class CategorieDetail extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            isOutOfStock ? 'stock épuisé' : product.available_stock.toString() + " en stock",
+                            isOutOfStock ? 'Stock épuisé' : "${product.available_stock} en stock",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: isOutOfStock ? Colors.red.shade700 : Colors.black,

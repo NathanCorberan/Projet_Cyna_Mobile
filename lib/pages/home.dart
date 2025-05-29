@@ -2,7 +2,7 @@ import 'package:cynamobile/apiRequest/get_product.dart';
 import 'package:flutter/material.dart';
 import '../widgets/header_menu.dart';
 import 'package:provider/provider.dart';
-import 'package:cynamobile/providers/VarProvider.dart';
+import 'package:cynamobile/providers/var_provider.dart';
 import '../apiRequest/get_categorie.dart';
 import 'package:cynamobile/pages/CategorieDetail.dart';
 import 'package:cynamobile/widgets/product_card.dart';
@@ -15,18 +15,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<dynamic> categories = [];
-  List<Map<String, dynamic>> products = [];
+  List<Map<String, String>> products = [];
 
   @override
   void initState() {
     super.initState();
+    // On ne peut pas utiliser context dans initState, donc on reporte au didChangeDependencies
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _loadCategories();
     _loadTopProduct();
   }
 
   Future<void> _loadCategories() async {
     try {
-      List<dynamic> fetchedCategorie = await GetCategorie.fetchCategorie();
+      List<dynamic> fetchedCategorie = await GetCategorie.fetchCategorie(context);
       setState(() {
         categories = fetchedCategorie;
       });
@@ -37,7 +43,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadTopProduct() async {
     try {
-      List<Map<String, dynamic>> fetchedTopProduct = await GetTopProduct.fetchTopProduct();
+      List<Map<String, String>> fetchedTopProduct = await GetTopProduct.fetchTopProduct(context);
       setState(() {
         products = fetchedTopProduct;
       });
@@ -55,8 +61,8 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             HeaderMenu(),
-            SizedBox(height: 40),
-            Text(
+            const SizedBox(height: 40),
+            const Text(
               "Actualité et nouveauté",
               style: TextStyle(
                 color: Colors.black,
@@ -65,19 +71,19 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(left: 20, right: 20, top: 10),
+              margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
               width: MediaQuery.of(context).size.width * 0.9,
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               height: 150,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Color(0xFF302082),
+                  color: const Color(0xFF302082),
                   width: 3,
                 ),
                 borderRadius: BorderRadius.circular(10),
-                color: Color(0xFFF2F2F2),
+                color: const Color(0xFFF2F2F2),
               ),
-              child: Text(
+              child: const Text(
                 "Aucun évenement en cours ...",
                 style: TextStyle(
                   fontSize: 16,
@@ -86,8 +92,8 @@ class _HomePageState extends State<HomePage> {
                 textAlign: TextAlign.left,
               ),
             ),
-            SizedBox(height: 40),
-            Text(
+            const SizedBox(height: 40),
+            const Text(
               "Catégorie",
               style: TextStyle(
                 color: Colors.black,
@@ -96,13 +102,13 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(left: 20, right: 20, top: 10),
-              padding: EdgeInsets.all(5),
+              margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+              padding: const EdgeInsets.all(5),
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: GridView.builder(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     crossAxisSpacing: MediaQuery.of(context).size.width * 0.05,
@@ -111,27 +117,28 @@ class _HomePageState extends State<HomePage> {
                   ),
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
+                    final category = categories[index];
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => CategorieDetail(
-                              categoryData: categories,
+                              categoryData: [category], // on passe une liste contenant la catégorie sélectionnée
                             ),
                           ),
                         );
                       },
                       child: Container(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: Color(0xFF302082),
+                          color: const Color(0xFF302082),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          categories[index]['name'],
-                          style: TextStyle(
+                          category['name'],
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -144,8 +151,8 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            SizedBox(height: 40),
-            Text(
+            const SizedBox(height: 40),
+            const Text(
               "Top du moment",
               style: TextStyle(
                 color: Colors.black,
@@ -154,10 +161,10 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               child: ListView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: products.length,
                 itemBuilder: (context, index) {
                   final product = products[index];

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pages/home.dart';
 import 'package:provider/provider.dart';
-import 'providers/VarProvider.dart';
+import 'providers/var_provider.dart';
 import 'providers/cart_provider.dart';
 import 'pages/panier.dart'; // Assure-toi que le nom du fichier est correct
 

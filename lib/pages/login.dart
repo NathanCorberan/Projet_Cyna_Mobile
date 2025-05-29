@@ -6,7 +6,7 @@ import 'dart:convert';
 import './createAccount.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import '../providers/VarProvider.dart';
+import '../providers/var_provider.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 
 class Login extends StatefulWidget  {
@@ -25,7 +25,8 @@ class _LoginState extends State<Login> {
     String password = passwordController.text;
     final varProvider = Provider.of<VarProvider>(context, listen: false);
 
-    final String apiUrl = "http://api.juku7704.odns.fr/api/login";
+    final String apiUrl = "${varProvider.url}/login";
+    final String apiMeUrl = "${varProvider.url}/me";
 
     try {
       final response = await http.post(
@@ -47,12 +48,13 @@ class _LoginState extends State<Login> {
         Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
 
         final responseUser = await http.get(
-          Uri.parse("http://api.juku7704.odns.fr/api/me"),
+          Uri.parse(apiMeUrl),
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer "+ token,
+            "Authorization": "Bearer $token",
           },
         );
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
@@ -60,11 +62,15 @@ class _LoginState extends State<Login> {
 
         varProvider.updateUserVariable(responseUser.body);
       } else {
-        errorOnConnexion = true;
+        setState(() {
+          errorOnConnexion = true;
+        });
         print("Erreur : ${response.statusCode} - ${response.body}");
       }
     } catch (e) {
-      errorOnConnexion = true;
+      setState(() {
+        errorOnConnexion = true;
+      });
       print("Erreur de connexion : $e");
     }
   }

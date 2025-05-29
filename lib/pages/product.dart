@@ -14,9 +14,9 @@ class _ProductPageState extends State<ProductPage> {
   late Future<List<Map<String, String>>> _futureProducts;
 
   @override
-  void initState() {
-    super.initState();
-    _futureProducts = GetTopProduct.fetchTopProduct();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _futureProducts = GetTopProduct.fetchTopProduct(context);
   }
 
   @override

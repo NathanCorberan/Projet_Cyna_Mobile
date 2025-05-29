@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../apiRequest/get_categorie.dart';
-import 'package:cynamobile/pages/CategorieDetail.dart';
+import '../providers/var_provider.dart';
+import 'CategorieDetail.dart';
 
-class Categorie extends StatelessWidget {
+class Categorie extends StatefulWidget {
   const Categorie({Key? key}) : super(key: key);
+
+  @override
+  State<Categorie> createState() => _CategorieState();
+}
+
+class _CategorieState extends State<Categorie> {
+  late Future<List<dynamic>> futureCategories;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Charger les données après que le context est disponible
+    futureCategories = GetCategorie.fetchCategorie(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +46,7 @@ class Categorie extends StatelessWidget {
           const SizedBox(height: 20),
           Expanded(
             child: FutureBuilder<List<dynamic>>(
-              future: GetCategorie.fetchCategorie(),
+              future: futureCategories,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -84,8 +100,7 @@ class Categorie extends StatelessWidget {
                                     ? Image.network(
                                   imageUrl,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) =>
-                                  const Center(child: Icon(Icons.broken_image)),
+                                  errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
                                 )
                                     : const Center(child: Icon(Icons.image_not_supported)),
                               ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'dart:convert';
 
 class User {
@@ -11,6 +10,7 @@ class User {
 }
 
 class VarProvider extends ChangeNotifier {
+  // Variable partagée
   String _sharedVariable = "Valeur initiale";
 
   String get sharedVariable => _sharedVariable;
@@ -20,6 +20,10 @@ class VarProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // URL de base de l'API
+  final String url = "http://srv839278.hstgr.cloud:8000/api";
+
+  // Variable utilisateur
   User? _userVariable;
 
   User? get userVariable => _userVariable;
@@ -31,12 +35,11 @@ class VarProvider extends ChangeNotifier {
   }
 
   void updateUserVariable(Object newValue) {
-
     if (newValue is String) {
       try {
         newValue = jsonDecode(newValue);
       } catch (e) {
-        print(" Erreur lors du décodage JSON : $e");
+        print("Erreur lors du décodage JSON : $e");
         return;
       }
     }
@@ -49,10 +52,9 @@ class VarProvider extends ChangeNotifier {
       _userVariable!.last_name = newValue['last_name'] ?? _userVariable!.last_name;
 
       notifyListeners();
-      print(" Utilisateur mis à jour : $_userVariable");
+      print("Utilisateur mis à jour : $_userVariable");
     } else {
-      print("Erreur");
+      print("Erreur : données inattendues");
     }
   }
-
 }

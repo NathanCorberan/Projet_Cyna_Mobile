@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import '../providers/VarProvider.dart';
+import '../providers/var_provider.dart';
 import '../pages/home.dart';
 
 
@@ -34,7 +34,8 @@ class _CreateAccountState extends State<CreateAccount> {
       return;
     }
 
-    final String apiUrl = "http://api.juku7704.odns.fr/api/users";
+    final varProvider = Provider.of<VarProvider>(context, listen: false);
+    final String apiUrl = "${varProvider.url}/users";
 
     try {
       final response = await http.post(
@@ -59,13 +60,15 @@ class _CreateAccountState extends State<CreateAccount> {
         );
       } else {
         print("Erreur : ${response.statusCode} - ${response.body}");
-        errorOnCreate = true;
-        _CreateAccountState;
+        setState(() {
+          errorOnCreate = true;
+        });
       }
     } catch (e) {
       print("Erreur de connexion : $e");
-      errorOnCreate = true;
-      _CreateAccountState;
+      setState(() {
+        errorOnCreate = true;
+      });
     }
   }
 

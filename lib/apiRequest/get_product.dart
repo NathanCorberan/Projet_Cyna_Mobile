@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/var_provider.dart';
 
 class GetTopProduct {
-  static const String _url = 'http://api.juku7704.odns.fr/api/products';
+  static Future<List<Map<String, String>>> fetchTopProduct(BuildContext context) async {
+    final varProvider = Provider.of<VarProvider>(context, listen: false);
+    final String url = '${varProvider.url}/products';
 
-  static Future<List<Map<String, String>>> fetchTopProduct() async {
     try {
-      final response = await http.get(Uri.parse(_url));
+      final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = json.decode(response.body);
@@ -14,17 +18,18 @@ class GetTopProduct {
         if (jsonResponse.containsKey('member')) {
           List<dynamic> products = jsonResponse['member'];
 
-          // Maintenant, on construit la liste avec les informations disponibles
           List<Map<String, String>> productList = products.map((item) {
             String name = item['productLangages'] != null && item['productLangages'].isNotEmpty
                 ? item['productLangages'][0]['name'] ?? 'Nom indisponible'
                 : 'Nom indisponible';
+
             String description = item['productLangages'] != null && item['productLangages'].isNotEmpty
                 ? item['productLangages'][0]['description'] ?? 'Description indisponible'
                 : 'Description indisponible';
+
             String image = item['productImages'] != null && item['productImages'].isNotEmpty
                 ? item['productImages'][0]['image_link'] ?? ''
-                : ''; // Assure que l'image est présente
+                : '';
 
             return {
               'name': name,
