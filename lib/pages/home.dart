@@ -108,42 +108,64 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(10.0),
                 child: GridView.builder(
                   shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
+                  physics: NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: MediaQuery.of(context).size.width * 0.05,
-                    mainAxisSpacing: MediaQuery.of(context).size.width * 0.05,
-                    childAspectRatio: 1,
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 0.8, // Ajuste selon la taille souhaitée
                   ),
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
                     final category = categories[index];
+                    final String imageUrl = category['imageLink'] != null && category['imageLink'].isNotEmpty
+                        ? "http://${category['imageLink']}"
+                        : '';
+
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => CategorieDetail(
-                              categoryData: [category], // on passe une liste contenant la catégorie sélectionnée
+                              categoryData: [category], // Envoie la catégorie sélectionnée seule
                             ),
                           ),
                         );
                       },
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF302082),
+                      child: Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Text(
-                          category['name'],
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                child: imageUrl.isNotEmpty
+                                    ? Image.network(
+                                  imageUrl,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
+                                )
+                                    : const Center(child: Icon(Icons.image_not_supported)),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                category['name'] ?? 'Nom inconnu',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                          ],
                         ),
                       ),
                     );

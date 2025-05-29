@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cynamobile/apiRequest/getProductByCategorie.dart';
+import 'productDetail.dart';
 
 class CategorieDetail extends StatelessWidget {
   final List<dynamic> categoryData; // Typé comme liste
@@ -98,53 +99,69 @@ class CategorieDetail extends StatelessWidget {
                     final product = products[index];
                     final bool isOutOfStock = product.available_stock == 0;
 
-                    return Card(
-                      color: isOutOfStock ? Colors.red.shade100 : null,
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                              child: product.image.isNotEmpty
-                                  ? Image.network(
-                                product.image,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
-                              )
-                                  : const Center(child: Icon(Icons.image_not_supported)),
-                            ),
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductDetailPage(product: {
+                              'name': product.name,
+                              'description': product.description ?? '',
+                              'price': product.price,
+                              'image': product.image,
+                              'stock': product.available_stock > 0 ? 'Disponible' : 'Épuisé',
+                            }),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              product.name,
+                        );
+                      },
+                      child: Card(
+                        color: isOutOfStock ? Colors.red.shade100 : null,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                child: product.image.isNotEmpty
+                                    ? Image.network(
+                                  product.image,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
+                                )
+                                    : const Center(child: Icon(Icons.image_not_supported)),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                product.name,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(
+                                product.price,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(color: Colors.green),
+                              ),
+                            ),
+                            Text(
+                              isOutOfStock ? 'Stock épuisé' : "${product.available_stock} en stock",
                               textAlign: TextAlign.center,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                color: isOutOfStock ? Colors.red.shade700 : Colors.black,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Text(
-                              product.price,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.green),
-                            ),
-                          ),
-                          Text(
-                            isOutOfStock ? 'Stock épuisé' : "${product.available_stock} en stock",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: isOutOfStock ? Colors.red.shade700 : Colors.black,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                        ],
+                            const SizedBox(height: 8),
+                          ],
+                        ),
                       ),
                     );
                   },
