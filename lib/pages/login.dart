@@ -1,15 +1,15 @@
-import '../pages/home.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:jwt_decode/jwt_decode.dart';
+import '../providers/var_provider.dart';
+import '../pages/home.dart';
 import '../widgets/header_menu.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'dart:convert';
 import './createAccount.dart';
-import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
-import '../providers/var_provider.dart';
-import 'package:jwt_decode/jwt_decode.dart';
 
-class Login extends StatefulWidget  {
+class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
 }
@@ -31,22 +31,27 @@ class _LoginState extends State<Login> {
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "email": email,
-          "password": password
-        }),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"email": email, "password": password}),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("Compte connecté avec succès : ${response.body}");
-
         Map<String, dynamic> data = jsonDecode(response.body);
         String token = data['token'];
-        Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
 
+        // Initialiser userVariable si null
+        if (varProvider.userVariable == null) {
+          varProvider.updateUserVariable({
+            'first_name': '',
+            'last_name': '',
+            'email': '',
+          });
+        }
+
+        // Mettre à jour le token dans User
+        varProvider.userVariable?.updateUserToken(token);
+
+        // Récupérer les infos utilisateur
         final responseUser = await http.get(
           Uri.parse(apiMeUrl),
           headers: {
@@ -55,17 +60,23 @@ class _LoginState extends State<Login> {
           },
         );
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
+        if (responseUser.statusCode == 200) {
+          varProvider.updateUserVariable(responseUser.body);
 
-        varProvider.updateUserVariable(responseUser.body);
+          // Naviguer vers la page d'accueil
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        } else {
+          setState(() {
+            errorOnConnexion = true;
+          });
+        }
       } else {
         setState(() {
           errorOnConnexion = true;
         });
-        print("Erreur : ${response.statusCode} - ${response.body}");
       }
     } catch (e) {
       setState(() {
@@ -83,6 +94,7 @@ class _LoginState extends State<Login> {
   }
 
   void _goToChangePassword(BuildContext context) {
+    // À implémenter si nécessaire
   }
 
   @override
@@ -96,142 +108,111 @@ class _LoginState extends State<Login> {
             Center(
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
-                padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 width: MediaQuery.of(context).size.width * 0.8,
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Color(0xFF302082),
-                    width: 3,
-                  ),
+                  border: Border.all(color: Color(0xFF302082), width: 3),
                   borderRadius: BorderRadius.circular(10),
-                  color: Color(0xFFFFFFFF),
+                  color: Colors.white,
                 ),
                 child: Column(
                   children: [
                     Text(
                       "Connexion",
                       style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
+                          color: Colors.black,
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 10),
                     _buildTextField("Email", emailController),
                     SizedBox(height: 10),
-                    _buildTextField("Mot de passe", passwordController, obscureText: !_isPasswordVisible),
+                    _buildTextField("Mot de passe", passwordController,
+                        obscureText: !_isPasswordVisible),
                     SizedBox(height: 10),
-                    if (errorOnConnexion) Text(
-                      "Email ou mot de passe incorrect",
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 18,
+                    if (errorOnConnexion)
+                      Text(
+                        "Email ou mot de passe incorrect",
+                        style: TextStyle(color: Colors.red, fontSize: 18),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
                     SizedBox(height: 10),
                     TextButton(
                       onPressed: _login,
                       style: TextButton.styleFrom(
                         backgroundColor: Color(0xFF302082),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 6, horizontal: 15),
+                            borderRadius: BorderRadius.circular(12)),
+                        padding:
+                        EdgeInsets.symmetric(vertical: 6, horizontal: 15),
                       ),
                       child: Text(
                         "Se connecter",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
                     SizedBox(height: 10),
                     TextButton(
+                      onPressed: () => _goToChangePassword(context),
                       style: TextButton.styleFrom(
-                        backgroundColor: Color(0xFFFFFFFF),
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                            borderRadius: BorderRadius.circular(12)),
                         overlayColor: Colors.transparent,
                       ),
-                      onPressed: () => _goToChangePassword(context),
                       child: Text(
-                          "Mot de passe oublié ?",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18
-                          )
+                        "Mot de passe oublié ?",
+                        style: TextStyle(color: Colors.black, fontSize: 18),
                       ),
                     ),
-                    Row (
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           "Nouveau ?",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                          ),
-                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.black, fontSize: 18),
                         ),
                         TextButton(
+                          onPressed: () => _goToLogin(context),
                           style: TextButton.styleFrom(
-                            backgroundColor: Color(0xFFFFFFFF),
+                            backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                                borderRadius: BorderRadius.circular(12)),
                             overlayColor: Colors.transparent,
                           ),
-                          onPressed: () => _goToLogin(context),
                           child: Text(
-                              "Créez un compte",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold
-                              )
+                            "Créez un compte",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
                           ),
                         )
                       ],
                     ),
-                    Container(
-                      height: 2.0,
-                      color: Color(0xFF302082),
-                    ),
+                    Container(height: 2, color: Color(0xFF302082)),
                     SizedBox(height: 10),
                     Text(
                       "Ou connectez-vous avec",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.black, fontSize: 18),
                     ),
                     SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
-                          icon: Icon(
-                            FontAwesomeIcons.google,
-                            color: Color(0xFF302082),
-                            size: 30,
-                          ),
+                          icon: Icon(FontAwesomeIcons.google,
+                              color: Color(0xFF302082), size: 30),
                           onPressed: () {},
                         ),
                         IconButton(
-                          icon: Icon(
-                            FontAwesomeIcons.facebook,
-                            color: Color(0xFF302082),
-                            size: 30,
-                          ),
+                          icon: Icon(FontAwesomeIcons.facebook,
+                              color: Color(0xFF302082), size: 30),
                           onPressed: () {},
                         ),
                       ],
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -243,7 +224,8 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {bool obscureText = false}) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      {bool obscureText = false}) {
     IconData icon;
 
     switch (label.toLowerCase()) {
@@ -286,7 +268,9 @@ class _LoginState extends State<Login> {
             });
           },
           child: Icon(
-            _isPasswordVisible ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
+            _isPasswordVisible
+                ? Icons.remove_red_eye
+                : Icons.remove_red_eye_outlined,
             color: Color(0xFF302082),
           ),
         )

@@ -3,6 +3,13 @@ import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../models/cart_item.dart';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
+import '../models/cart_item.dart';
+import '../providers/var_provider.dart';
+import '../services/stripe_service.dart';
+
 class PanierPage extends StatelessWidget {
   const PanierPage({super.key});
 
@@ -173,15 +180,27 @@ class PanierPage extends StatelessWidget {
       ],
     );
   }
-
   Widget _buildCheckoutButton(BuildContext context, CartProvider cartProvider) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {
-          cartProvider.clearCart();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Commande passée avec succès")),
+        onPressed: () async {
+          final varProvider = Provider.of<VarProvider>(context, listen: false);
+          final user = varProvider.userVariable;
+
+          if (user == null || user.userToken.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Utilisateur non connecté")),
+            );
+            //return;
+          }
+
+          const int orderId = 123;
+
+          await StripeService.payWithStripe(
+            context: context,
+            orderId: orderId,
+            userToken: user!.userToken,
           );
         },
         style: ElevatedButton.styleFrom(
