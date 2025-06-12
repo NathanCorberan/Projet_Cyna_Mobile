@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../models/cart_item.dart';
+import '../models/product.dart';
+import '../providers/var_provider.dart';
 
 class ProductDetailPage extends StatelessWidget {
-  final Map<String, dynamic> product;
-
-  const ProductDetailPage({super.key, required this.product});
+  final Product product;
+  const ProductDetailPage({Key? key, required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
+    final varProvider = Provider.of<VarProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -32,16 +34,17 @@ class ProductDetailPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            if (product['image'] != null && product['image']!.isNotEmpty)
+            if (product.image.isNotEmpty)
               Image.network(
-                product['image']!,
+                product.image,
                 height: 250,
+                fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) =>
                 const Icon(Icons.broken_image, size: 100),
               ),
             const SizedBox(height: 16),
             Text(
-              product['name'] ?? 'Nom inconnu',
+              product.name,
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -51,20 +54,20 @@ class ProductDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              product['description'] ?? 'Aucune description',
+              product.description,
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
             Text(
-              'Prix : ${product['price'] ?? '-'}',
+              'Prix : ${product.price}',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
-              'Stock : ${product['stock'] ?? '-'}',
+              'Stock : ${product.stock}',
               style: TextStyle(
                 fontSize: 16,
-                color: product['stock'] == 'Disponible' ? Colors.green : Colors.red,
+                color: product.stock == 'Disponible' ? Colors.green : Colors.red,
               ),
             ),
             const SizedBox(height: 24),
@@ -72,10 +75,12 @@ class ProductDetailPage extends StatelessWidget {
               onPressed: () {
                 cartProvider.addToCart(
                   CartItem(
-                    name: product['name'] ?? '',
-                    price: product['price'] ?? '',
-                    image: product['image'] ?? '',
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                      productId: product.id,
                   ),
+                  varProvider,
                 );
 
                 ScaffoldMessenger.of(context).showSnackBar(

@@ -1,31 +1,126 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/cart_provider.dart';
-import '../models/cart_item.dart';
 
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/cart_provider.dart';
+import '../apiRequest/get_order.dart';
+import '../apiRequest/get_order_item.dart';
 import '../models/cart_item.dart';
+import '../providers/cart_provider.dart';
 import '../providers/var_provider.dart';
 import '../services/stripe_service.dart';
 
-class PanierPage extends StatelessWidget {
+class PanierPage extends StatefulWidget {
   const PanierPage({super.key});
+
+  @override
+  State<PanierPage> createState() => _PanierPageState();
+}
+
+class _PanierPageState extends State<PanierPage> {
+  bool isLoading = true;
+  String? error;
+  List<CartItem> items = [];
+
+  Future<void> _fetchCart() async {
+    final varProvider = Provider.of<VarProvider>(context, listen: false);
+    final orderId = varProvider.orderId;
+    final user = varProvider.userVariable;
+
+    if (orderId == null || user == null || user.userToken.isEmpty) {
+      setState(() {
+        error = "Utilisateur non connecté ou aucune commande en cours.";
+        isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      final getOrder = GetOrder(baseUrl: varProvider.url, token: user.userToken);
+      final orderData = await getOrder.fetchOrder(orderId);
+
+      final List<dynamic> orderItemsRaw = orderData['orderItems'] ?? [];
+
+      final getOrderItem = GetOrderItem(baseUrl: varProvider.url, token: user.userToken);
+      final List<CartItem> loadedItems = [];
+      for (var orderItemData in orderItemsRaw) {
+        Map<String, dynamic> orderItem;
+
+        if (orderItemData is String) {
+          orderItem = await getOrderItem.fetchItem(orderItemData);
+        } else if (orderItemData is Map) {
+          orderItem = Map<String, dynamic>.from(orderItemData);
+        } else {
+          continue;
+        }
+
+        final productEndpoint = orderItem['product'] as String;
+        final product = await getOrderItem.fetchItem(productEndpoint);
+        final List<dynamic> member = product['member'] ?? [];
+
+        final List<dynamic> productLanguages = member.length > 5 && member[5] is List
+            ? member[5]
+            : [];
+
+        final List<dynamic> productImages = member.length > 6 && member[6] is List
+            ? member[6]
+            : [];
+
+        final List<dynamic> subscriptions = member.length > 7 && member[7] is List
+            ? member[7]
+            : [];
+
+        final String name = productLanguages.isNotEmpty && productLanguages[0] is Map
+            ? productLanguages[0]['name'] ?? 'Produit sans nom'
+            : 'Produit sans nom';
+
+        final String imageUrl = productImages.isNotEmpty && productImages[0] is Map
+            ? '${varProvider.url}/${productImages[0]['image_link']}'
+            : '';
+
+        final double price = subscriptions.isNotEmpty && subscriptions[0] is Map
+            ? double.tryParse(
+          (subscriptions[0]['price'] ?? '0')
+              .toString()
+              .replaceAll('€', '')
+              .trim(),
+        ) ?? 0.0
+            : 0.0;
+
+        loadedItems.add(CartItem(
+          productId: member[0],
+          name: name,
+          price: price,
+          quantity: orderItem['quantity'] ?? 1,
+          image: imageUrl,
+        ));
+      }
+
+      setState(() {
+        items = loadedItems;
+        isLoading = false;
+        error = null;
+      });
+    } catch (e) {
+      setState(() {
+        error = "Erreur lors du chargement : $e";
+        isLoading = false;
+      });
+    }
+  }
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCart();
+  }
 
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context);
-    final items = cart.items;
-
-    double total = 0;
-    for (var item in items) {
-      final price = double.tryParse(item.price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0;
-      total += price * item.quantity;
-    }
-
-    const shipping = 4.99;
-    final totalWithShipping = total + shipping;
+    final double subtotal = items.fold(0.0, (sum, item) => sum + item.price * item.quantity);
+    const double shipping = 0;
+    final double total = subtotal + shipping;
 
     return Scaffold(
       appBar: AppBar(
@@ -36,7 +131,11 @@ class PanierPage extends StatelessWidget {
         backgroundColor: const Color(0xFF302082),
       ),
       body: SafeArea(
-        child: items.isEmpty
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : error != null
+            ? Center(child: Text(error!))
+            : items.isEmpty
             ? const Center(child: Text("Votre panier est vide."))
             : SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -50,7 +149,7 @@ class PanierPage extends StatelessWidget {
               const SizedBox(height: 16),
               ...items.map((item) => _buildCartItem(context, item)).toList(),
               const SizedBox(height: 24),
-              _buildSummaryBox(context, total, shipping, totalWithShipping),
+              _buildSummaryBox(context, subtotal, shipping, total),
               const SizedBox(height: 16),
               _buildCheckoutButton(context, cart),
             ],
@@ -106,13 +205,18 @@ class PanierPage extends StatelessWidget {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
-                    Text("Prix unitaire : ${item.price}"),
+                    Text("Prix unitaire : ${item.price.toStringAsFixed(2)} €"),
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: IconButton(
                         icon: const Icon(Icons.delete),
-                        onPressed: () => cart.removeFromCart(item),
+                        onPressed: () {
+                          cart.removeFromCart(item);
+                          setState(() {
+                            items.remove(item);
+                          });
+                        },
                       ),
                     ),
                   ],
@@ -180,6 +284,7 @@ class PanierPage extends StatelessWidget {
       ],
     );
   }
+
   Widget _buildCheckoutButton(BuildContext context, CartProvider cartProvider) {
     return SizedBox(
       width: double.infinity,
@@ -192,15 +297,21 @@ class PanierPage extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Utilisateur non connecté")),
             );
-            //return;
+            return;
           }
 
-          const int orderId = 123;
+          final int? orderId = varProvider.orderId;
+          if (orderId == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Aucune commande en cours")),
+            );
+            return;
+          }
 
           await StripeService.payWithStripe(
             context: context,
             orderId: orderId,
-            userToken: user!.userToken,
+            userToken: user.userToken,
           );
         },
         style: ElevatedButton.styleFrom(

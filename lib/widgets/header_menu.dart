@@ -6,7 +6,7 @@ import '../pages/accountParameter.dart';
 import 'package:provider/provider.dart';
 import '../providers/var_provider.dart';
 import '../pages/categorie.dart';
-import '../pages/product.dart';
+import '../pages/productPage.dart';
 import '../pages/panier.dart';
 
 
@@ -113,7 +113,7 @@ class _HeaderMenuState extends State<HeaderMenu> {
         if (title == "Catégorie") {
           Navigator.push(context, MaterialPageRoute(builder: (context) => const Categorie()));
         } else if (title == "Produit") {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const ProductPage()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ProductPage()));
         }
       },
       child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 20)),

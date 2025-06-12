@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cynamobile/apiRequest/getProductByCategorie.dart';
 import 'productDetail.dart';
+import '../models/product.dart';
+
 
 class CategorieDetail extends StatelessWidget {
   final List<dynamic> categoryData;
@@ -103,13 +105,7 @@ class CategorieDetail extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProductDetailPage(product: {
-                              'name': product.name,
-                              'description': product.description ?? '',
-                              'price': product.price,
-                              'image': product.image,
-                              'stock': product.available_stock > 0 ? 'Disponible' : 'Épuisé',
-                            }),
+                            builder: (context) => ProductDetailPage(product: product),
                           ),
                         );
                       },
@@ -146,7 +142,7 @@ class CategorieDetail extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Text(
-                                product.price,
+                                product.price.toString(),
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(color: Colors.green),
                               ),

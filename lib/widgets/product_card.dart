@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import '../models/product.dart';
 
 class ProductCard extends StatelessWidget {
-  final Map<String, dynamic> product;
+  final Product product;
   final VoidCallback? onTap;
 
-  const ProductCard({Key? key, required this.product, this.onTap}) : super(key: key);
+  const ProductCard({
+    Key? key,
+    required this.product,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +24,21 @@ class ProductCard extends StatelessWidget {
             Expanded(
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                child: Image.network(
-                  product['image'] ?? '',
+                child: product.image.isNotEmpty
+                    ? Image.network(
+                  product.image,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.image_not_supported),
-                ),
+                  const Center(child: Icon(Icons.image_not_supported)),
+                )
+                    : const Center(child: Icon(Icons.image_not_supported)),
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Center(
                 child: Text(
-                  product['name'] ?? '',
+                  product.name,
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   maxLines: 1,
@@ -43,7 +50,7 @@ class ProductCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Center(
                 child: Text(
-                  product['description'] ?? '',
+                  product.description,
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -57,13 +64,13 @@ class ProductCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    product['price'] ?? '',
+                    product.price.toString(),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    product['stock'] ?? '',
+                    product.stock,
                     style: TextStyle(
-                      color: product['stock'] == 'Disponible' ? Colors.green : Colors.red,
+                      color: product.stock == 'Disponible' ? Colors.green : Colors.red,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

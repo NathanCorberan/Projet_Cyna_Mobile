@@ -3,22 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/var_provider.dart';
-
-class Product {
-  final String name;
-  final String description;
-  final String image;
-  final String price;
-  final int available_stock;
-
-  Product({
-    required this.name,
-    required this.description,
-    required this.image,
-    required this.price,
-    required this.available_stock,
-  });
-}
+import '../models/product.dart';
 
 class GetProductByCategorie {
   static Future<List<Product>> fetchProductsByCategorie(BuildContext context, int categoryId) async {
@@ -42,31 +27,7 @@ class GetProductByCategorie {
       List<Product> products = [];
 
       for (var item in productsRaw) {
-        String name = 'Nom indisponible';
-        String description = 'Description indisponible';
-        String image = '';
-        String price = 'Non renseigné';
-
-        if (item['productLangages'] != null && item['productLangages'] is List && item['productLangages'].isNotEmpty) {
-          name = 'Produit ${item['id']}';
-          description = 'Description du produit ${item['id']}';
-        }
-
-        if (item['productImages'] != null && item['productImages'] is List && item['productImages'].isNotEmpty) {
-          image = 'https://picsum.photos/500/500';
-        }
-
-        if (item['subscriptionTypes'] != null && item['subscriptionTypes'] is List && item['subscriptionTypes'].isNotEmpty) {
-          price = '150.00€';
-        }
-
-        products.add(Product(
-          name: name,
-          description: description,
-          image: image,
-          price: price,
-          available_stock: item['available_stock'] ?? 0,
-        ));
+        products.add(Product.fromJson(item)); // ✅ Conversion avec modèle centralisé
       }
 
       return products;

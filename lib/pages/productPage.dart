@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../apiRequest/get_product.dart';
 import 'package:cynamobile/pages/productDetail.dart';
 import 'package:cynamobile/widgets/product_card.dart';
+import '../models/product.dart';
 
 class ProductPage extends StatefulWidget {
   const ProductPage({Key? key}) : super(key: key);
@@ -11,12 +12,12 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  late Future<List<Map<String, String>>> _futureProducts;
+  late Future<List<Product>> _futureProducts;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _futureProducts = GetTopProduct.fetchTopProduct(context);
+    _futureProducts = GetProduct.fetchTopProduct(context);
   }
 
   @override
@@ -43,7 +44,7 @@ class _ProductPageState extends State<ProductPage> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<Map<String, String>>>(
+            child: FutureBuilder<List<Product>>(
               future: _futureProducts,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {

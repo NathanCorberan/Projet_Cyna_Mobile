@@ -7,6 +7,8 @@ import '../apiRequest/get_categorie.dart';
 import 'package:cynamobile/pages/CategorieDetail.dart';
 import 'package:cynamobile/widgets/product_card.dart';
 import 'package:cynamobile/pages/productDetail.dart';
+import '../models/product.dart';
+
 
 class HomePage extends StatefulWidget {
   @override
@@ -15,7 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<dynamic> categories = [];
-  List<Map<String, String>> products = [];
+  List<Product> products = [];
 
   @override
   void initState() {
@@ -42,7 +44,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadTopProduct() async {
     try {
-      List<Map<String, String>> fetchedTopProduct = await GetTopProduct.fetchTopProduct(context);
+      List<Product> fetchedTopProduct = await GetProduct.fetchTopProduct(context);
       setState(() {
         products = fetchedTopProduct;
       });

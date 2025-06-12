@@ -34,7 +34,7 @@ class StripeService {
 
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
-          setupIntentClientSecret: clientSecret, // ✅ Utilisation correcte
+          setupIntentClientSecret: clientSecret,
           merchantDisplayName: 'Mon App',
           style: ThemeMode.light,
         ),
@@ -52,7 +52,7 @@ class StripeService {
         },
         body: jsonEncode({
           'order_id': orderId,
-          "payment_method_id": "pm_1RTmuh2NsckbDruQmJ4BnGgr", // ⚠️ À générer dynamiquement idéalement
+          "payment_method_id": "pm_1RTmuh2NsckbDruQmJ4BnGgr",
         }),
       );
       print('[Stripe] ➤ checkout response: ${checkoutResponse.statusCode}');

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 class User extends ChangeNotifier {
+  int id;
   String first_name;
   String last_name;
   String email;
@@ -15,18 +16,23 @@ class User extends ChangeNotifier {
   }
 
   User({
+    required this.id,
     required this.first_name,
     required this.last_name,
     required this.email,
   });
 
-  // Méthodes pour mettre à jour les champs en notifiant
   void updateInfo({
+    int? userId,
     String? firstName,
     String? lastName,
     String? email,
   }) {
     bool changed = false;
+    if (userId != null && userId != id) {
+      id = userId;
+      changed = true;
+    }
     if (firstName != null && firstName != first_name) {
       first_name = firstName;
       changed = true;
@@ -50,6 +56,19 @@ class VarProvider extends ChangeNotifier {
 
   void updateVariable(String newValue) {
     _sharedVariable = newValue;
+    notifyListeners();
+  }
+
+  int? _orderId;
+  int? get orderId => _orderId;
+
+  void setOrderId(int id) {
+    _orderId = id;
+    notifyListeners();
+  }
+
+  void clearOrderId() {
+    _orderId = null;
     notifyListeners();
   }
 
@@ -77,22 +96,27 @@ class VarProvider extends ChangeNotifier {
 
     if (newValue is Map<String, dynamic>) {
       if (_userVariable == null) {
-        _userVariable = User(first_name: '', last_name: '', email: '');
+        _userVariable = User(
+          id: newValue['id'] ?? 0,
+          first_name: '',
+          last_name: '',
+          email: '',
+        );
       }
 
       _userVariable!.updateInfo(
+        userId: newValue['id'],
         firstName: newValue['first_name'],
         lastName: newValue['last_name'],
         email: newValue['email'],
       );
 
-      // ✅ Ajoute le token ici
       if (newValue.containsKey('token')) {
         _userVariable!.updateUserToken(newValue['token']);
       }
 
       notifyListeners();
-      print("Utilisateur mis à jour : $_userVariable");
+      print("Utilisateur mis à jour : ID=${_userVariable!.id}");
     } else {
       print("Erreur : données inattendues");
     }
