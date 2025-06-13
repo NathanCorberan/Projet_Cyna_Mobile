@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../apiRequest/get_categorie.dart';
-import '../providers/var_provider.dart';
 import 'CategorieDetail.dart';
 
 class Categorie extends StatefulWidget {

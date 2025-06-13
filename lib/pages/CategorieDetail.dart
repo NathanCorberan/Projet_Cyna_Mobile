@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cynamobile/apiRequest/getProductByCategorie.dart';
+import 'package:cynamobile/apiRequest/get_product_by_categorie.dart';
 import 'productDetail.dart';
 import '../models/product.dart';
 import '../providers/var_provider.dart';
