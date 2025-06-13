@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:provider/provider.dart';
-import 'package:jwt_decode/jwt_decode.dart';
 import '../providers/var_provider.dart';
 import '../pages/home.dart';
 import '../widgets/header_menu.dart';
@@ -39,7 +38,6 @@ class _LoginState extends State<Login> {
         Map<String, dynamic> data = jsonDecode(response.body);
         String token = data['token'];
 
-        // Initialiser userVariable si null
         if (varProvider.userVariable == null) {
           varProvider.updateUserVariable({
             'first_name': '',
@@ -48,10 +46,8 @@ class _LoginState extends State<Login> {
           });
         }
 
-        // Mettre à jour le token dans User
         varProvider.userVariable?.updateUserToken(token);
 
-        // Récupérer les infos utilisateur
         final responseUser = await http.get(
           Uri.parse(apiMeUrl),
           headers: {
@@ -63,7 +59,6 @@ class _LoginState extends State<Login> {
         if (responseUser.statusCode == 200) {
           varProvider.updateUserVariable(responseUser.body);
 
-          // Naviguer vers la page d'accueil
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => HomePage()),
@@ -94,7 +89,6 @@ class _LoginState extends State<Login> {
   }
 
   void _goToChangePassword(BuildContext context) {
-    // À implémenter si nécessaire
   }
 
   @override

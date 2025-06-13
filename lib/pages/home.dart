@@ -117,60 +117,63 @@ class _HomePageState extends State<HomePage> {
                     childAspectRatio: 0.8,
                   ),
                   itemCount: categories.length,
-                  itemBuilder: (context, index) {
-                    final category = categories[index];
-                    final String imageUrl = category['imageLink'] != null && category['imageLink'].isNotEmpty
-                        ? "http://${category['imageLink']}"
-                        : '';
+                    itemBuilder: (context, index) {
+                      final category = categories[index];
 
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CategorieDetail(
-                              categoryData: [category],
-                            ),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                                child: imageUrl.isNotEmpty
-                                    ? Image.network(
-                                  imageUrl,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
-                                )
-                                    : const Center(child: Icon(Icons.image_not_supported)),
+                      final varProvider = Provider.of<VarProvider>(context, listen: false);
+                      final String imagePath = category['imageLink'] ?? '';
+                      final String imageUrl = imagePath.isNotEmpty && varProvider.categorieImageUrl != null
+                          ? '${varProvider.categorieImageUrl}$imagePath'
+                          : '';
+
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CategorieDetail(
+                                categoryData: [category],
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                category['name'] ?? 'Nom inconnu',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                          );
+                        },
+                        child: Card(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                  child: imageUrl.isNotEmpty
+                                      ? Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
+                                  )
+                                      : const Center(child: Icon(Icons.image_not_supported)),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                          ],
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  category['name'] ?? 'Nom inconnu',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    }
                 ),
               ),
             ),

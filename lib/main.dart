@@ -10,7 +10,7 @@ import 'providers/cart_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Stripe.publishableKey = 'pk_test_51RRVpj2NsckbDruQ663hlj28B3JEF8lVNKl7EA8xdRo8A4H9EXbb2TKKrjZ4t5HhYuDtVFW67JYAsSQD3Qp5Y9Ru009RHSvrzl'; // 🔁 Remplace par ta vraie clé
+  Stripe.publishableKey = 'pk_test_51RRVpj2NsckbDruQ663hlj28B3JEF8lVNKl7EA8xdRo8A4H9EXbb2TKKrjZ4t5HhYuDtVFW67JYAsSQD3Qp5Y9Ru009RHSvrzl';
   await Stripe.instance.applySettings();
 
   runApp(
@@ -36,13 +36,12 @@ class MyApp extends StatelessWidget {
       home: HomePage(),
       routes: {
         '/cart': (context) => const PanierPage(),
-        '/success': (context) => SuccessPage(), // 🔁 Crée une page si tu rediriges vers /success
+        '/success': (context) => SuccessPage(),
       },
     );
   }
 }
 
-// 🔁 Exemple rapide de page succès
 class SuccessPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

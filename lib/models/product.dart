@@ -37,7 +37,6 @@ class Product {
       priceRaw = item['subscriptionTypes'][0]['price'] ?? '';
     }
 
-    // Enlever le '€' et convertir en double
     String priceString = priceRaw.replaceAll('€', '').trim();
     double price = double.tryParse(priceString) ?? 0.0;
 

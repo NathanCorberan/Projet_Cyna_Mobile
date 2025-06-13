@@ -27,7 +27,7 @@ class GetProductByCategorie {
       List<Product> products = [];
 
       for (var item in productsRaw) {
-        products.add(Product.fromJson(item)); // ✅ Conversion avec modèle centralisé
+        products.add(Product.fromJson(item));
       }
 
       return products;

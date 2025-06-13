@@ -36,69 +36,75 @@ class _PanierPageState extends State<PanierPage> {
     try {
       final getOrder = GetOrder(baseUrl: varProvider.url, token: user.userToken);
       final orderData = await getOrder.fetchOrder(orderId);
+      print(orderData);
 
-      final List<dynamic> orderItemsRaw = orderData['orderItems'] ?? [];
+      if (orderData['status'] == "cart") {
+        final List<dynamic> orderItemsRaw = orderData['orderItems'] ?? [];
 
-      final getOrderItem = GetOrderItem(baseUrl: varProvider.url, token: user.userToken);
-      final List<CartItem> loadedItems = [];
-      for (var orderItemData in orderItemsRaw) {
-        Map<String, dynamic> orderItem;
+        final getOrderItem = GetOrderItem(baseUrl: varProvider.url, token: user.userToken);
+        final List<CartItem> loadedItems = [];
+        for (var orderItemData in orderItemsRaw) {
+          Map<String, dynamic> orderItem;
 
-        if (orderItemData is String) {
-          orderItem = await getOrderItem.fetchItem(orderItemData);
-        } else if (orderItemData is Map) {
-          orderItem = Map<String, dynamic>.from(orderItemData);
-        } else {
-          continue;
+          if (orderItemData is String) {
+            orderItem = await getOrderItem.fetchItem(orderItemData);
+          } else if (orderItemData is Map) {
+            orderItem = Map<String, dynamic>.from(orderItemData);
+          } else {
+            continue;
+          }
+
+          final productEndpoint = orderItem['product'] as String;
+          final product = await getOrderItem.fetchItem(productEndpoint);
+          final List<dynamic> member = product['member'] ?? [];
+
+          final List<dynamic> productLanguages = member.length > 5 && member[5] is List
+              ? member[5]
+              : [];
+
+          final List<dynamic> productImages = member.length > 6 && member[6] is List
+              ? member[6]
+              : [];
+
+          final List<dynamic> subscriptions = member.length > 7 && member[7] is List
+              ? member[7]
+              : [];
+
+          final String name = productLanguages.isNotEmpty && productLanguages[0] is Map
+              ? productLanguages[0]['name'] ?? 'Produit sans nom'
+              : 'Produit sans nom';
+
+          final String imageUrl = productImages.isNotEmpty && productImages[0] is Map
+              ? '${varProvider.productImageUrl}${productImages[0]['image_link']}'
+              : '';
+
+          final double price = subscriptions.isNotEmpty && subscriptions[0] is Map
+              ? double.tryParse(
+            (subscriptions[0]['price'] ?? '0')
+                .toString()
+                .replaceAll('€', '')
+                .trim(),
+          ) ??
+              0.0
+              : 0.0;
+
+          print(imageUrl);
+
+          loadedItems.add(CartItem(
+            productId: member[0],
+            name: name,
+            price: price,
+            quantity: orderItem['quantity'] ?? 1,
+            image: imageUrl,
+          ));
         }
 
-        final productEndpoint = orderItem['product'] as String;
-        final product = await getOrderItem.fetchItem(productEndpoint);
-        final List<dynamic> member = product['member'] ?? [];
-
-        final List<dynamic> productLanguages = member.length > 5 && member[5] is List
-            ? member[5]
-            : [];
-
-        final List<dynamic> productImages = member.length > 6 && member[6] is List
-            ? member[6]
-            : [];
-
-        final List<dynamic> subscriptions = member.length > 7 && member[7] is List
-            ? member[7]
-            : [];
-
-        final String name = productLanguages.isNotEmpty && productLanguages[0] is Map
-            ? productLanguages[0]['name'] ?? 'Produit sans nom'
-            : 'Produit sans nom';
-
-        final String imageUrl = productImages.isNotEmpty && productImages[0] is Map
-            ? '${varProvider.url}/${productImages[0]['image_link']}'
-            : '';
-
-        final double price = subscriptions.isNotEmpty && subscriptions[0] is Map
-            ? double.tryParse(
-          (subscriptions[0]['price'] ?? '0')
-              .toString()
-              .replaceAll('€', '')
-              .trim(),
-        ) ?? 0.0
-            : 0.0;
-
-        loadedItems.add(CartItem(
-          productId: member[0],
-          name: name,
-          price: price,
-          quantity: orderItem['quantity'] ?? 1,
-          image: imageUrl,
-        ));
+        setState(() {
+          items = loadedItems;
+          isLoading = false;
+          error = null;
+        });
       }
-
-      setState(() {
-        items = loadedItems;
-        isLoading = false;
-        error = null;
-      });
     } catch (e) {
       setState(() {
         error = "Erreur lors du chargement : $e";

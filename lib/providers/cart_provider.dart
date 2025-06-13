@@ -70,13 +70,13 @@ class CartProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 201) {
-        debugPrint("✅ Article ajouté à la commande avec succès !");
+        debugPrint("Article ajouté à la commande avec succès !");
       } else {
-        debugPrint("❌ Erreur ajout article : ${response.statusCode}");
+        debugPrint("Erreur ajout article : ${response.statusCode}");
         debugPrint("Réponse : ${response.body}");
       }
     } catch (e) {
-      debugPrint("❌ Erreur réseau ajout article : $e");
+      debugPrint("Erreur réseau ajout article : $e");
     }
   }
 

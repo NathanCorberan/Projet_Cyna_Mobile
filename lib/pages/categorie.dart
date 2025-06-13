@@ -72,7 +72,6 @@ class _CategorieState extends State<Categorie> {
                     final category = categories[index];
                     final String name = category['name'] ?? 'Nom inconnu';
                     final String imageUrl = "http://${category['imageLink'] ?? ''}";
-
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(

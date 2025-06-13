@@ -93,9 +93,9 @@ class _LoginState extends State<Accountparameter> {
                             ),
                             Column(
                               children: [
-                                _buildTextField("Nom",  varProvider.userVariable?.first_name ?? ""),
+                                _buildTextField("Nom",  varProvider.userVariable?.firstName ?? ""),
                                 SizedBox(height: 10),
-                                _buildTextField("Prénom", varProvider.userVariable?.last_name ?? "" ),
+                                _buildTextField("Prénom", varProvider.userVariable?.lastName ?? "" ),
                               ],
                             ),
                           ],

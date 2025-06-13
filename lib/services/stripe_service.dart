@@ -42,7 +42,7 @@ class StripeService {
       print('[Stripe] ➤ PaymentSheet initialisé');
 
       await Stripe.instance.presentPaymentSheet();
-      print('[Stripe] ✅ Paiement confirmé par l’utilisateur');
+      print('[Stripe] Paiement confirmé par l’utilisateur');
 
       final checkoutResponse = await http.post(
         Uri.parse('http://srv839278.hstgr.cloud:8000/api/payment/checkout'),
@@ -59,7 +59,7 @@ class StripeService {
 
       if (checkoutResponse.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Paiement réussi ✅')),
+          const SnackBar(content: Text('Paiement réussi')),
         );
         Navigator.pushNamed(context, '/success');
       } else {
@@ -67,12 +67,12 @@ class StripeService {
       }
     } on StripeException catch (e) {
       final message = e.error.message ?? 'Erreur Stripe inconnue';
-      print('[Stripe] ⚠️ StripeException: $message');
+      print('[Stripe] StripeException: $message');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur Stripe : $message')),
       );
     } catch (e) {
-      print('[Stripe] ❌ Exception non Stripe: $e');
+      print('[Stripe] Exception non Stripe: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur : $e')),
       );

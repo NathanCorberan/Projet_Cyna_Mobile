@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/product.dart';
+import '../providers/var_provider.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -13,6 +15,9 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final productImageBase = Provider.of<VarProvider>(context).productImageUrl ?? '';
+    final String imageUrl = product.image.isNotEmpty ? '$productImageBase${product.image}' : '';
+
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -24,9 +29,9 @@ class ProductCard extends StatelessWidget {
             Expanded(
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                child: product.image.isNotEmpty
+                child: imageUrl.isNotEmpty
                     ? Image.network(
-                  product.image,
+                  imageUrl,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) =>
                   const Center(child: Icon(Icons.image_not_supported)),
@@ -47,7 +52,7 @@ class ProductCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
               child: Center(
                 child: Text(
                   product.description,
@@ -57,7 +62,7 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
             ),
-            const Spacer(),
+            SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
               child: Row(
@@ -78,7 +83,7 @@ class ProductCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
+        )
       ),
     );
   }

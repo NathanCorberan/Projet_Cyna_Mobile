@@ -14,6 +14,10 @@ class ProductDetailPage extends StatelessWidget {
     final cartProvider = Provider.of<CartProvider>(context);
     final varProvider = Provider.of<VarProvider>(context, listen: false);
 
+    final String baseImageUrl = varProvider.productImageUrl ?? '';
+    final String fullImageUrl =
+    product.image.isNotEmpty ? '$baseImageUrl${product.image}' : '';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -34,9 +38,9 @@ class ProductDetailPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            if (product.image.isNotEmpty)
+            if (fullImageUrl.isNotEmpty)
               Image.network(
-                product.image,
+                fullImageUrl,
                 height: 250,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) =>
@@ -77,8 +81,8 @@ class ProductDetailPage extends StatelessWidget {
                   CartItem(
                     name: product.name,
                     price: product.price,
-                    image: product.image,
-                      productId: product.id,
+                    image: fullImageUrl, // ✅ Utiliser l'URL complète ici aussi
+                    productId: product.id,
                   ),
                   varProvider,
                 );

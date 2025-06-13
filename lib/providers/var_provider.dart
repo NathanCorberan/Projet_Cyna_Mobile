@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
+/// Classe représentant un utilisateur
 class User extends ChangeNotifier {
   int id;
-  String first_name;
-  String last_name;
+  String firstName;
+  String lastName;
   String email;
   String _userToken = '';
 
   String get userToken => _userToken;
 
+  User({
+    required this.id,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+  });
+
+  /// Met à jour le token utilisateur
   void updateUserToken(String token) {
     _userToken = token;
     notifyListeners();
   }
 
-  User({
-    required this.id,
-    required this.first_name,
-    required this.last_name,
-    required this.email,
-  });
-
+  /// Met à jour les informations de l'utilisateur
   void updateInfo({
     int? userId,
     String? firstName,
@@ -29,29 +32,42 @@ class User extends ChangeNotifier {
     String? email,
   }) {
     bool changed = false;
+
     if (userId != null && userId != id) {
       id = userId;
       changed = true;
     }
-    if (firstName != null && firstName != first_name) {
-      first_name = firstName;
+
+    if (firstName != null && firstName != this.firstName) {
+      this.firstName = firstName;
       changed = true;
     }
-    if (lastName != null && lastName != last_name) {
-      last_name = lastName;
+
+    if (lastName != null && lastName != this.lastName) {
+      this.lastName = lastName;
       changed = true;
     }
+
     if (email != null && email != this.email) {
       this.email = email;
       changed = true;
     }
+
     if (changed) notifyListeners();
   }
 }
 
+/// Provider principal pour les variables partagées
 class VarProvider extends ChangeNotifier {
-  String _sharedVariable = "Valeur initiale";
+  //==================================================
+  // URL de base de l'API
+  //==================================================
+  final String url = "http://srv839278.hstgr.cloud:8000/api";
 
+  //==================================================
+  // Variable partagée simple
+  //==================================================
+  String _sharedVariable = "Valeur initiale";
   String get sharedVariable => _sharedVariable;
 
   void updateVariable(String newValue) {
@@ -59,6 +75,9 @@ class VarProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  //==================================================
+  // Gestion des commandes
+  //==================================================
   int? _orderId;
   int? get orderId => _orderId;
 
@@ -72,19 +91,19 @@ class VarProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  final String url = "http://srv839278.hstgr.cloud:8000/api";
-
+  //==================================================
+  // Gestion des données utilisateur
+  //==================================================
   User? _userVariable;
-
   User? get userVariable => _userVariable;
 
   void setUserVariableNull() {
     _userVariable = null;
-    print(_userVariable);
     notifyListeners();
   }
 
   void updateUserVariable(Object newValue) {
+    // Décodage si c'est une chaîne JSON
     if (newValue is String) {
       try {
         newValue = jsonDecode(newValue);
@@ -95,14 +114,13 @@ class VarProvider extends ChangeNotifier {
     }
 
     if (newValue is Map<String, dynamic>) {
-      if (_userVariable == null) {
-        _userVariable = User(
-          id: newValue['id'] ?? 0,
-          first_name: '',
-          last_name: '',
-          email: '',
-        );
-      }
+      // Création si l'utilisateur n'existe pas encore
+      _userVariable ??= User(
+        id: newValue['id'] ?? 0,
+        firstName: '',
+        lastName: '',
+        email: '',
+      );
 
       _userVariable!.updateInfo(
         userId: newValue['id'],
@@ -120,5 +138,24 @@ class VarProvider extends ChangeNotifier {
     } else {
       print("Erreur : données inattendues");
     }
+  }
+
+  //==================================================
+  // Gestion des URL d'images
+  //==================================================
+  String? _categorieImageUrl = "http://srv839278.hstgr.cloud:8000/assets/images/categories/";
+  String? get categorieImageUrl => _categorieImageUrl;
+
+  void updateCategorieImageUrl(String url) {
+    _categorieImageUrl = url;
+    notifyListeners();
+  }
+
+  String? _productImageUrl = "http://srv839278.hstgr.cloud:8000/assets/images/products/";
+  String? get productImageUrl => _productImageUrl;
+
+  void updateProductImageUrl(String url) {
+    _productImageUrl = url;
+    notifyListeners();
   }
 }

@@ -17,7 +17,6 @@ class GetCategorie {
 
         if (jsonResponse.containsKey('member')) {
           List<dynamic> categories = jsonResponse['member'];
-          print(categories);
           return categories;
         } else {
           throw Exception('La clé "member" est absente dans la réponse.');

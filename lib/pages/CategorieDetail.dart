@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:cynamobile/apiRequest/getProductByCategorie.dart';
 import 'productDetail.dart';
 import '../models/product.dart';
-
+import '../providers/var_provider.dart';
 
 class CategorieDetail extends StatelessWidget {
   final List<dynamic> categoryData;
@@ -11,9 +12,15 @@ class CategorieDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String imageUrl = categoryData.isNotEmpty && categoryData[0]['imageLink'] != null
-        ? "http://${categoryData[0]['imageLink']}"
-        : '';
+    final varProvider = Provider.of<VarProvider>(context, listen: false);
+
+    final String baseCategoryImageUrl = varProvider.categorieImageUrl ?? '';
+    final String baseProductImageUrl = varProvider.productImageUrl ?? '';
+
+    String imageUrl = '';
+    if (categoryData.isNotEmpty && categoryData[0]['imageLink'] != null) {
+      imageUrl = '$baseCategoryImageUrl${categoryData[0]['imageLink']}';
+    }
 
     String categoryName = categoryData.isNotEmpty && categoryData[0]['name'] != null
         ? categoryData[0]['name']
@@ -40,7 +47,8 @@ class CategorieDetail extends StatelessWidget {
                   imageUrl,
                   fit: BoxFit.cover,
                   alignment: Alignment.topCenter,
-                  errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
+                  errorBuilder: (_, __, ___) =>
+                  const Center(child: Icon(Icons.broken_image)),
                 )
                     : const Center(child: Icon(Icons.image_not_supported)),
               ),
@@ -76,7 +84,8 @@ class CategorieDetail extends StatelessWidget {
           const SizedBox(height: 20),
           Expanded(
             child: FutureBuilder<List<Product>>(
-              future: GetProductByCategorie.fetchProductsByCategorie(context, categoryData[0]['id']),
+              future:
+              GetProductByCategorie.fetchProductsByCategorie(context, categoryData[0]['id']),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -100,6 +109,10 @@ class CategorieDetail extends StatelessWidget {
                     final product = products[index];
                     final bool isOutOfStock = product.available_stock == 0;
 
+                    final String productImageFullUrl = product.image.isNotEmpty
+                        ? '$baseProductImageUrl${product.image}'
+                        : '';
+
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -120,13 +133,15 @@ class CategorieDetail extends StatelessWidget {
                           children: [
                             Expanded(
                               child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                                child: product.image.isNotEmpty
+                                borderRadius:
+                                const BorderRadius.vertical(top: Radius.circular(12)),
+                                child: productImageFullUrl.isNotEmpty
                                     ? Image.network(
-                                  product.image,
+                                  productImageFullUrl,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
+                                  errorBuilder: (_, __, ___) =>
+                                  const Center(child: Icon(Icons.broken_image)),
                                 )
                                     : const Center(child: Icon(Icons.image_not_supported)),
                               ),
